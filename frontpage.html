@@ -468,6 +468,13 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* Style for required form fields */
+        .required-field::after {
+            content: '*';
+            color: red;
+            margin-left: 2px;
+        }
 
     </style>
     <link rel="icon" type="image/png" href="logo.png">
@@ -483,9 +490,7 @@
         </div>
     </div>
 
-    <!-- Main App Container -->
     <div id="app-container" style="visibility: hidden; opacity: 0; transition: opacity 0.5s ease-in;">
-        <!-- Navbar -->
         <header class="flex justify-between items-center px-8 py-4 shadow-sm bg-white dark:bg-gray-800 fixed top-0 left-0 right-0 z-50">
             <div class="flex items-center space-x-2">
                  <img src="logo.png" alt="Healthcare Eclipse Logo" class="w-10 h-10 rounded-full">
@@ -529,14 +534,11 @@
         </header>
 
         <main id="main-content">
-             <!-- This div will contain either the landing page or the dashboard -->
-        </main>
+             </main>
 
-        <!-- Login/Register Modal -->
         <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-sm relative animate-fade-in">
-                 <!-- Modal content will be injected here by JavaScript -->
-            </div>
+                 </div>
         </div>
     </div>
 
@@ -569,12 +571,26 @@
                 const modalContent = document.getElementById('modal-content');
                 const themeToggle = document.getElementById('checkbox');
                 
-                let currentUser = null;
+                let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+                
+                // --- MOCK DATA ---
+                const mockDoctors = [
+                    { id: 1, firstName: 'Aisha', lastName: 'Khan', specialty: 'Cardiology', email: 'aisha.khan@eclipse.com' },
+                    { id: 2, firstName: 'Rajesh', lastName: 'Sharma', specialty: 'General Practice', email: 'rajesh.sharma@eclipse.com' },
+                    { id: 3, firstName: 'Priya', lastName: 'Verma', specialty: 'Diabetology', email: 'priya.verma@eclipse.com' },
+                ];
+                
+                // Appointment Requests storage (simplified for mock data)
+                // Stores { patientEmail: string, doctorEmail: string, status: string }
+                let appointmentRequests = JSON.parse(localStorage.getItem('appointmentRequests')) || [];
+                
+                function saveAppointmentRequests() {
+                    localStorage.setItem('appointmentRequests', JSON.stringify(appointmentRequests));
+                }
 
                 // Templates for different views
                 const landingPageTemplate = `
                     <div id="landing-page-content">
-                        <!-- Hero Section -->
                         <section class="relative bg-black h-[70vh] flex flex-col items-center justify-center text-center mt-20">
                             <div class="bg-black bg-opacity-50 absolute inset-0"></div>
                             <div class="relative z-10 text-white max-w-2xl px-4">
@@ -598,7 +614,6 @@
                             </div>
                         </section>
 
-                        <!-- Services Section -->
                         <section id="services" class="py-16 bg-gray-50 dark:bg-gray-900">
                              <div class="max-w-6xl mx-auto text-center px-4">
                                 <h3 class="text-3xl font-semibold mb-4">Our Services</h3>
@@ -616,7 +631,6 @@
                             </div>
                         </section>
 
-                        <!-- Footer Section -->
                         <footer id="contact" class="py-16 bg-gray-900 dark:bg-black text-gray-300">
                              <div class="max-w-6xl mx-auto px-4">
                                 <h4 class="text-2xl font-semibold mb-8 text-center text-white">Leadership Team</h4>
@@ -638,11 +652,100 @@
                 `;
                 
                 function getPatientDashboardTemplate(user) {
+                    const healthRecord = user.healthRecord || null;
+                    const resultsHtml = healthRecord ? generateHealthResultsHtml(healthRecord) : `
+                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg mb-8" role="alert">
+                            <p class="font-bold">Action Required</p>
+                            <p>Please submit your health records below to access personalized warnings, doctor recommendations, and medicine suggestions.</p>
+                        </div>
+                        <form id="health-record-form" class="space-y-6">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Input Your Health Records</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Weight (kg)</label>
+                                    <input type="number" step="0.1" name="weight" placeholder="e.g. 70.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Height (cm)</label>
+                                    <input type="number" name="height" placeholder="e.g. 175" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Gender</label>
+                                    <select name="gender" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">BP Systolic (mmHg)</label>
+                                    <input type="number" name="bpSystolic" placeholder="e.g. 120" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">BP Diastolic (mmHg)</label>
+                                    <input type="number" name="bpDiastolic" placeholder="e.g. 80" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Heart Rate (bpm)</label>
+                                    <input type="number" name="heartRate" placeholder="e.g. 75" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Blood Sugar (mg/dL)</label>
+                                    <input type="number" name="bloodSugar" placeholder="e.g. 95" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Sleep Duration (hours)</label>
+                                    <input type="number" step="0.5" name="sleepDuration" placeholder="e.g. 7.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Exercise (minutes/day)</label>
+                                    <input type="number" name="exerciseMinutes" placeholder="e.g. 30" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Water Intake (litres)</label>
+                                    <input type="number" step="0.1" name="waterIntake" placeholder="e.g. 2.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Stress Level (1-10)</label>
+                                    <input type="range" name="stressLevel" min="1" max="10" value="5" oninput="this.nextElementSibling.value=this.value" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" required />
+                                    <output>5</output>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block mb-2 font-medium required-field">Alcohol/Smoking</label>
+                                    <select name="alcoholSmoking" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required>
+                                        <option value="none">None</option>
+                                        <option value="social_alcohol">Social Alcohol</option>
+                                        <option value="regular_alcohol">Regular Alcohol</option>
+                                        <option value="smoker">Smoker</option>
+                                        <option value="both">Both</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-span-full">
+                                <label class="block mb-2 font-medium">Current Symptoms (comma separated)</label>
+                                <input type="text" name="symptoms" placeholder="e.g. headache, fatigue, mild fever" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="col-span-full">
+                                <label class="block mb-2 font-medium">Additional Notes</label>
+                                <textarea name="additionalNotes" rows="3" placeholder="Any other relevant information..." class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="glowing-button w-full">Submit Health Record</button>
+                        </form>
+                    `;
+                    
                     return `
-                        <div id="patient-dashboard" class="p-8 pt-28">
+                        <div id="patient-dashboard" class="p-8 pt-28 max-w-6xl mx-auto">
                             <h2 class="text-3xl font-bold mb-4">Patient Dashboard</h2>
                             <p class="mb-8 text-lg">Welcome back, <span class="font-semibold">${user.firstName} ${user.lastName}</span>!</p>
-                            <div class="grid md:grid-cols-2 gap-8">
+                            
+                            ${resultsHtml}
+                            
+                            <div class="grid md:grid-cols-2 gap-8 mt-8">
                                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                                     <h3 class="text-xl font-semibold mb-4">Your Information</h3>
                                     <p><strong>Email:</strong> ${user.email}</p>
@@ -650,11 +753,12 @@
                                 </div>
                                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                                     <h3 class="text-xl font-semibold mb-4">Upcoming Appointments</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">You have no upcoming appointments.</p>
+                                    ${getPatientAppointmentsHtml(user.email)}
                                 </div>
-                                <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Your Health Records</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">No health records found.</p>
+                                <div id="current-health-record" class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Your Latest Health Record</h3>
+                                    ${healthRecord ? formatHealthRecord(healthRecord) : '<p class="text-gray-500 dark:text-gray-400">No health records submitted yet.</p>'}
+                                    ${healthRecord ? '<button id="update-health-record-btn" class="mt-4 px-4 py-2 border border-blue-500 text-blue-500 rounded-md text-sm font-medium hover:bg-blue-500 hover:text-white dark:border-blue-400 dark:hover:bg-blue-600">Update Record</button>' : ''}
                                 </div>
                             </div>
                         </div>
@@ -662,32 +766,242 @@
                 }
 
                 function getDoctorDashboardTemplate(user) {
+                    const requestsHtml = getDoctorAppointmentRequestsHtml(user.email);
                     return `
-                        <div id="doctor-dashboard" class="p-8 pt-28">
+                        <div id="doctor-dashboard" class="p-8 pt-28 max-w-6xl mx-auto">
                             <h2 class="text-3xl font-bold mb-4">Doctor Dashboard</h2>
                             <p class="mb-8 text-lg">Welcome back, <span class="font-semibold">Dr. ${user.lastName}</span>!</p>
                              <div class="grid md:grid-cols-2 gap-8">
                                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                                     <h3 class="text-xl font-semibold mb-4">Your Information</h3>
                                     <p><strong>Email:</strong> ${user.email}</p>
+                                    <p><strong>Specialty:</strong> ${mockDoctors.find(d => d.email === user.email)?.specialty || 'N/A'}</p>
                                 </div>
                                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                                     <h3 class="text-xl font-semibold mb-4">Your Schedule</h3>
                                     <p class="text-gray-500 dark:text-gray-400">Your schedule is clear for today.</p>
                                 </div>
-                                <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Patient List</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">You have no patients assigned yet.</p>
+                                <div id="appointment-requests" class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Appointment Requests</h3>
+                                    ${requestsHtml}
                                 </div>
                             </div>
                         </div>
                     `;
                 }
+                
+                function formatHealthRecord(record) {
+                    return `
+                        <div class="space-y-4">
+                            <div><strong class="text-blue-600 dark:text-blue-400">Vital Signs:</strong></div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+                                <p><strong>Weight:</strong> ${record.weight} kg</p>
+                                <p><strong>Height:</strong> ${record.height} cm</p>
+                                <p><strong>Gender:</strong> ${record.gender}</p>
+                                <p><strong>BP (Systolic):</strong> ${record.bpSystolic} mmHg</p>
+                                <p><strong>BP (Diastolic):</strong> ${record.bpDiastolic} mmHg</p>
+                                <p><strong>Heart Rate:</strong> ${record.heartRate} bpm</p>
+                                <p><strong>Blood Sugar:</strong> ${record.bloodSugar} mg/dL</p>
+                            </div>
+                            <div><strong class="text-blue-600 dark:text-blue-400">Lifestyle:</strong></div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+                                <p><strong>Sleep:</strong> ${record.sleepDuration} hrs</p>
+                                <p><strong>Exercise:</strong> ${record.exerciseMinutes} mins/day</p>
+                                <p><strong>Water:</strong> ${record.waterIntake} litres</p>
+                                <p><strong>Stress:</strong> ${record.stressLevel}/10</p>
+                                <p class="sm:col-span-3"><strong>Alcohol/Smoking:</strong> ${record.alcoholSmoking.replace('_', ' ')}</p>
+                            </div>
+                            <div><strong class="text-blue-600 dark:text-blue-400">Symptoms & Notes:</strong></div>
+                            <p class="text-sm"><strong>Symptoms:</strong> ${record.symptoms || 'None reported'}</p>
+                            <p class="text-sm"><strong>Notes:</strong> ${record.additionalNotes || 'N/A'}</p>
+                        </div>
+                    `;
+                }
+                
+                function getPatientAppointmentsHtml(patientEmail) {
+                    const requests = appointmentRequests.filter(req => req.patientEmail === patientEmail);
+                    if (requests.length === 0) {
+                        return '<p class="text-gray-500 dark:text-gray-400">You have no pending or confirmed appointments.</p>';
+                    }
+                    
+                    return `<ul class="space-y-3">
+                        ${requests.map(req => {
+                            const doctor = mockDoctors.find(d => d.email === req.doctorEmail);
+                            const doctorName = doctor ? `Dr. ${doctor.lastName} (${doctor.specialty})` : req.doctorEmail;
+                            const statusColor = req.status === 'Pending' ? 'text-yellow-500' : 'text-green-500';
+                            return `<li class="text-sm border-b border-gray-200 dark:border-gray-700 pb-2">
+                                Appointment with <strong>${doctorName}</strong>: <span class="${statusColor}">${req.status}</span>
+                            </li>`;
+                        }).join('')}
+                    </ul>`;
+                }
 
-                function showView(viewTemplate) {
+                function getDoctorAppointmentRequestsHtml(doctorEmail) {
+                    const requests = appointmentRequests.filter(req => req.doctorEmail === doctorEmail && req.status === 'Pending');
+                    
+                    if (requests.length === 0) {
+                         return '<p class="text-gray-500 dark:text-gray-400">You have no new appointment requests.</p>';
+                    }
+                    
+                    return `<ul class="space-y-4">
+                        ${requests.map(req => {
+                            const patientUser = (JSON.parse(localStorage.getItem('healthcareUsers')) || []).find(u => u.email === req.patientEmail);
+                            const patientName = patientUser ? `${patientUser.firstName} ${patientUser.lastName}` : req.patientEmail;
+                            const patientRecord = patientUser?.healthRecord ? `(BMI: ${calculateBMI(patientUser.healthRecord.weight, patientUser.healthRecord.height).toFixed(1)}, BP: ${patientUser.healthRecord.bpSystolic}/${patientUser.healthRecord.bpDiastolic})` : '';
+                            
+                            return `<li class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center" data-patient-email="${req.patientEmail}">
+                                <div>
+                                    <p class="font-semibold text-lg">${patientName}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Requesting Consultation ${patientRecord}</p>
+                                </div>
+                                <div>
+                                    <button class="accept-btn bg-green-500 hover:bg-green-600 text-white text-sm py-1 px-3 rounded-md mr-2" data-patient="${req.patientEmail}">Accept</button>
+                                    <button class="reject-btn bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-3 rounded-md" data-patient="${req.patientEmail}">Reject</button>
+                                </div>
+                            </li>`;
+                        }).join('')}
+                    </ul>`;
+                }
+                
+                function calculateBMI(weight, height) {
+                    const heightMeters = height / 100;
+                    return weight / (heightMeters * heightMeters);
+                }
+
+                function generateHealthResultsHtml(record) {
+                    const warnings = [];
+                    const medicineSuggestions = [];
+                    let doctorSpecialty = 'General Practice';
+                    
+                    // BMI Calculation and Warning
+                    const bmi = calculateBMI(record.weight, record.height);
+                    if (bmi > 30) {
+                        warnings.push('Severe Obesity: High risk of heart disease and diabetes. Consult a specialist.');
+                        medicineSuggestions.push('Lifestyle modification is the primary treatment. No immediate medication suggested without a doctor’s diagnosis.');
+                        doctorSpecialty = 'Cardiology';
+                    } else if (bmi > 25) {
+                        warnings.push('Overweight: Increased risk of hypertension and high cholesterol.');
+                        medicineSuggestions.push('Focus on diet and exercise. Consider supplements like Omega-3 for heart health (consult doctor).');
+                    }
+                    
+                    // Blood Pressure Warning
+                    if (record.bpSystolic >= 140 || record.bpDiastolic >= 90) {
+                        warnings.push('Hypertension (High Blood Pressure): Your blood pressure is high. This needs immediate medical attention.');
+                        medicineSuggestions.push('Initial suggestion: Lifestyle changes. Possible medications (e.g., ACE inhibitors or Beta-blockers) require a doctor’s prescription.');
+                        doctorSpecialty = 'Cardiology';
+                    } else if (record.bpSystolic >= 120 || record.bpDiastolic >= 80) {
+                        warnings.push('Elevated Blood Pressure: Close monitoring and lifestyle changes are recommended.');
+                    }
+                    
+                    // Blood Sugar Warning
+                    if (record.bloodSugar > 125) {
+                        warnings.push('High Blood Sugar: Your fasting blood sugar is elevated (possible diabetes). A formal lab test is necessary.');
+                        medicineSuggestions.push('Metformin (prescription only) is common for Type 2 Diabetes. Immediately start dietary control and increased physical activity.');
+                        doctorSpecialty = 'Diabetology';
+                    }
+                    
+                    // Lifestyle Warnings
+                    if (record.sleepDuration < 6) {
+                        warnings.push('Chronic Sleep Deprivation: This can severely impact mood, immunity, and concentration.');
+                    }
+                    if (record.stressLevel > 7) {
+                        warnings.push('High Stress Level: High stress can exacerbate other conditions like hypertension.');
+                    }
+                    if (['regular_alcohol', 'smoker', 'both'].includes(record.alcoholSmoking)) {
+                        warnings.push('High-Risk Lifestyle: Alcohol and/or smoking significantly increases cancer and cardiovascular disease risk.');
+                    }
+                    
+                    // Symptom-Based Suggestions
+                    if (record.symptoms && record.symptoms.toLowerCase().includes('headache')) {
+                         medicineSuggestions.push('For general headache relief: OTC Pain relievers like Ibuprofen or Paracetamol (Tylenol).');
+                    }
+                    if (record.symptoms && record.symptoms.toLowerCase().includes('fever')) {
+                         medicineSuggestions.push('For mild fever: Paracetamol (Acetaminophen) for temperature control.');
+                    }
+                    if (record.symptoms && record.symptoms.toLowerCase().includes('fatigue') && record.sleepDuration > 6) {
+                        medicineSuggestions.push('Persistent fatigue (even with sufficient sleep): May require blood tests to check for vitamin deficiencies (e.g., Vitamin D, B12).');
+                        doctorSpecialty = 'General Practice';
+                    }
+                    
+                    const warningHtml = warnings.length > 0 ? 
+                        `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-4">
+                            <p class="font-bold">⚠️ Health Warnings & AI Insights</p>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">${warnings.map(w => `<li>${w}</li>`).join('')}</ul>
+                        </div>` : 
+                        `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-4">
+                            <p class="font-bold">✅ Health Summary</p>
+                            <p class="text-sm mt-2">Your vital signs and lifestyle factors indicate a low immediate risk. Keep up the healthy habits!</p>
+                        </div>`;
+                        
+                    const medicineHtml = medicineSuggestions.length > 0 ?
+                        `<div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg mb-4">
+                            <p class="font-bold">💊 Possible Medicine Suggestions (Consult a Doctor!)</p>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">${medicineSuggestions.map(m => `<li>${m}</li>`).join('')}</ul>
+                        </div>` : '';
+                        
+                    const doctorListHtml = generateDoctorListHtml(doctorSpecialty);
+
+                    return `
+                        <div class="space-y-4">
+                            <h3 class="text-2xl font-semibold text-blue-600 dark:text-blue-400">Health Analysis Results</h3>
+                            ${warningHtml}
+                            ${medicineHtml}
+                            ${doctorListHtml}
+                        </div>
+                    `;
+                }
+                
+                function generateDoctorListHtml(suggestedSpecialty) {
+                    const filteredDoctors = mockDoctors.filter(d => d.specialty === suggestedSpecialty);
+                    const allDoctors = mockDoctors;
+                    const doctors = filteredDoctors.length > 0 ? filteredDoctors : allDoctors;
+                    const suggestionText = filteredDoctors.length > 0 ? `Based on your results, we recommend a **${suggestedSpecialty}** specialist:` : 'General list of available doctors:';
+                    
+                    return `
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h4 class="text-xl font-semibold mb-3">🧑‍⚕️ Doctor Recommendations</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">${suggestionText}</p>
+                            <ul class="space-y-3">
+                                ${doctors.map(doctor => {
+                                    const hasPendingRequest = appointmentRequests.some(req => 
+                                        req.patientEmail === currentUser.email && 
+                                        req.doctorEmail === doctor.email &&
+                                        req.status === 'Pending'
+                                    );
+                                    
+                                    const button = hasPendingRequest 
+                                        ? `<span class="text-sm text-yellow-500 font-medium">Request Pending</span>` 
+                                        : `<button class="request-appointment-btn bg-blue-600 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded-md" data-doctor-email="${doctor.email}">Request Appointment</button>`;
+                                        
+                                    return `<li class="flex justify-between items-center p-3 border-b dark:border-gray-700 last:border-b-0">
+                                        <div>
+                                            <p class="font-semibold">Dr. ${doctor.lastName}</p>
+                                            <p class="text-sm text-blue-600 dark:text-blue-400">${doctor.specialty}</p>
+                                        </div>
+                                        ${button}
+                                    </li>`;
+                                }).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                function showView(user) {
+                    let viewTemplate;
+                    if (!user) {
+                         viewTemplate = landingPageTemplate;
+                    } else if (user.role === 'patient') {
+                        viewTemplate = getPatientDashboardTemplate(user);
+                    } else if (user.role === 'doctor') {
+                        viewTemplate = getDoctorDashboardTemplate(user);
+                    } else {
+                        viewTemplate = landingPageTemplate;
+                    }
+
                     mainContent.innerHTML = viewTemplate;
+                    
+                    // Re-initialize the scroll observer for the landing page
                     if(viewTemplate === landingPageTemplate) {
-                         // Re-initialize the scroll observer for the landing page
                         const observer = new IntersectionObserver((entries) => {
                             entries.forEach((entry, index) => {
                                 if (entry.isIntersecting) {
@@ -759,6 +1073,19 @@
                     modalContent.innerHTML = '';
                 }
 
+                function saveUser(user) {
+                     const users = JSON.parse(localStorage.getItem('healthcareUsers')) || [];
+                     const index = users.findIndex(u => u.email === user.email);
+                     if (index !== -1) {
+                         users[index] = user;
+                     } else {
+                         users.push(user);
+                     }
+                     localStorage.setItem('healthcareUsers', JSON.stringify(users));
+                     localStorage.setItem('currentUser', JSON.stringify(user));
+                     currentUser = user;
+                }
+
                 function handleLogin(e) {
                     e.preventDefault();
                     const email = e.target.email.value;
@@ -767,13 +1094,10 @@
                     const user = users.find(u => u.email === email && u.password === password);
 
                     if (user) {
+                        localStorage.setItem('currentUser', JSON.stringify(user));
                         currentUser = user;
                         updateHeader();
-                        if (user.role === 'patient') {
-                            showView(getPatientDashboardTemplate(user));
-                        } else {
-                            showView(getDoctorDashboardTemplate(user));
-                        }
+                        showView(user);
                         closeModal();
                     } else {
                         const errorEl = document.getElementById('login-error');
@@ -800,24 +1124,96 @@
                         dob: e.target.dob.value,
                         email: email,
                         password: e.target.password.value,
-                        role: e.target.role.value
+                        role: e.target.role.value,
+                        healthRecord: null // Initialize health record for new patients
                     };
                     
-                    users.push(newUser);
-                    localStorage.setItem('healthcareUsers', JSON.stringify(users));
+                    saveUser(newUser); // Saves user to list and sets as current user
+                    
                     closeModal();
                     alert('Registration successful! Please log in.');
-                    showModal('login');
+                    // Switch to login modal without logging in automatically
+                    setTimeout(() => showModal('login'), 100); 
+                }
+                
+                function handleHealthRecordSubmit(e) {
+                    e.preventDefault();
+                    const form = e.target;
+                    
+                    const record = {
+                        weight: parseFloat(form.weight.value),
+                        height: parseInt(form.height.value),
+                        gender: form.gender.value,
+                        bpSystolic: parseInt(form.bpSystolic.value),
+                        bpDiastolic: parseInt(form.bpDiastolic.value),
+                        heartRate: parseInt(form.heartRate.value),
+                        bloodSugar: parseInt(form.bloodSugar.value),
+                        sleepDuration: parseFloat(form.sleepDuration.value),
+                        exerciseMinutes: parseInt(form.exerciseMinutes.value),
+                        waterIntake: parseFloat(form.waterIntake.value),
+                        stressLevel: parseInt(form.stressLevel.value),
+                        alcoholSmoking: form.alcoholSmoking.value,
+                        symptoms: form.symptoms.value.trim(),
+                        additionalNotes: form.additionalNotes.value.trim(),
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Update user object and persist
+                    currentUser.healthRecord = record;
+                    saveUser(currentUser);
+                    
+                    // Re-render dashboard
+                    showView(currentUser);
+                    alert('Health record submitted successfully! Review your analysis.');
+                }
+                
+                function handleRequestAppointment(doctorEmail) {
+                    const existingRequest = appointmentRequests.find(req => 
+                        req.patientEmail === currentUser.email && 
+                        req.doctorEmail === doctorEmail &&
+                        req.status === 'Pending'
+                    );
+
+                    if (existingRequest) {
+                        alert('You already have a pending request with this doctor.');
+                        return;
+                    }
+                    
+                    appointmentRequests.push({
+                        patientEmail: currentUser.email,
+                        doctorEmail: doctorEmail,
+                        status: 'Pending',
+                        date: new Date().toLocaleString()
+                    });
+                    saveAppointmentRequests();
+                    showView(currentUser); // Re-render to show "Request Pending"
+                    alert(`Appointment request sent to ${doctorEmail}!`);
+                }
+                
+                function handleDoctorAction(patientEmail, action) {
+                    const requestIndex = appointmentRequests.findIndex(req => 
+                        req.patientEmail === patientEmail && 
+                        req.doctorEmail === currentUser.email &&
+                        req.status === 'Pending'
+                    );
+                    
+                    if (requestIndex !== -1) {
+                        appointmentRequests[requestIndex].status = action === 'accept' ? 'Confirmed' : 'Rejected';
+                        saveAppointmentRequests();
+                        showView(currentUser); // Re-render doctor dashboard
+                        alert(`Appointment request from ${patientEmail} ${action}ed.`);
+                    }
                 }
                 
                 function handleLogout() {
                     currentUser = null;
+                    localStorage.removeItem('currentUser');
                     updateHeader();
-                    showView(landingPageTemplate);
+                    showView(null);
                 }
 
                 // Initial setup
-                showView(landingPageTemplate);
+                showView(currentUser);
                 updateHeader();
 
                 // Event Listeners
@@ -830,13 +1226,33 @@
                     if (e.target.id === 'close-modal') closeModal();
                     if (e.target.id === 'switch-to-register') showModal('register');
                     if (e.target.id === 'switch-to-login') showModal('login');
+                    
+                    // Patient Dashboard Buttons
+                    if (e.target.id === 'update-health-record-btn') {
+                        // For simplicity, re-render dashboard which will show the blank form again
+                        currentUser.healthRecord = null;
+                        showView(currentUser);
+                    }
+                    if (e.target.classList.contains('request-appointment-btn')) {
+                        handleRequestAppointment(e.target.dataset.doctorEmail);
+                    }
+                    
+                    // Doctor Dashboard Buttons
+                    if (e.target.classList.contains('accept-btn')) {
+                         handleDoctorAction(e.target.dataset.patient, 'accept');
+                    }
+                    if (e.target.classList.contains('reject-btn')) {
+                         handleDoctorAction(e.target.dataset.patient, 'reject');
+                    }
                 });
                 
                 document.body.addEventListener('submit', e => {
                     if (e.target.id === 'login-form') handleLogin(e);
                     if (e.target.id === 'register-form') handleRegister(e);
+                    if (e.target.id === 'health-record-form') handleHealthRecordSubmit(e);
                 });
 
+                // Theme Toggle initialization
                 if(themeToggle.checked) document.documentElement.classList.remove('dark');
                 else document.documentElement.classList.add('dark');
                 themeToggle.addEventListener('change', function() {
@@ -860,4 +1276,3 @@
     </script>
 </body>
 </html>
-
