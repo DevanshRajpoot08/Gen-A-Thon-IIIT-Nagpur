@@ -394,7 +394,13 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease-out;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+            opacity: 1;
+            visibility: visible;
+        }
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
 
         .loading svg polyline {
@@ -425,6 +431,43 @@
             stroke-dashoffset: 0;
           }
         }
+        
+        /* Shiny Text Effect */
+        .shiny-text {
+          color: #ccc; /* A light grey base color */
+          background: linear-gradient(
+            120deg,
+            #ccc 40%,
+            #fff 50%,
+            #ccc 60%
+          );
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent; /* This is the key */
+          display: inline-block;
+          animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+          0% {
+            background-position: 100%;
+          }
+          100% {
+            background-position: -100%;
+          }
+        }
+
+        /* Scroll-reveal animation for service cards */
+        .service-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .service-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
     </style>
     <link rel="icon" type="image/png" href="logo.png">
@@ -440,11 +483,12 @@
         </div>
     </div>
 
-    <div id="main-content" class="hidden">
+    <!-- Main App Container -->
+    <div id="app-container" style="visibility: hidden; opacity: 0; transition: opacity 0.5s ease-in;">
         <!-- Navbar -->
         <header class="flex justify-between items-center px-8 py-4 shadow-sm bg-white dark:bg-gray-800 fixed top-0 left-0 right-0 z-50">
             <div class="flex items-center space-x-2">
-                <img src="logo.png" alt="Healthcare Eclipse Logo" class="w-10 h-10 rounded-full">
+                 <img src="logo.png" alt="Healthcare Eclipse Logo" class="w-10 h-10 rounded-full">
                 <h1 class="text-xl font-bold">Healthcare Eclipse</h1>
             </div>
             <nav class="hidden md:flex space-x-8 text-sm font-medium">
@@ -469,86 +513,24 @@
                     </svg>
                   </span>
                 </label>
-                <div class="space-x-3 flex items-center" id="auth-buttons">
-                    <button id="login-btn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700">Login</button>
-                    <button id="register-btn" class="glowing-button">
-                      Register
-                    </button>
+                <div id="auth-container">
+                    <div class="space-x-3 flex items-center" id="auth-buttons">
+                        <button id="login-btn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700">Login</button>
+                        <button id="register-btn" class="glowing-button">
+                          Register
+                        </button>
+                    </div>
+                     <div id="user-info" class="hidden items-center space-x-4">
+                        <span id="welcome-message" class="font-medium text-blue-600 dark:text-blue-400"></span>
+                        <button id="logout-btn" class="px-4 py-2 border border-red-500 text-red-500 rounded-md text-sm font-medium hover:bg-red-500 hover:text-white dark:border-red-500 dark:hover:bg-red-600">Logout</button>
+                    </div>
                 </div>
-                 <div id="welcome-message" class="hidden font-medium text-blue-600 dark:text-blue-400"></div>
             </div>
         </header>
 
-        <!-- Hero Section -->
-        <section class="relative bg-black h-[70vh] flex flex-col items-center justify-center text-center mt-20">
-            <div class="bg-black bg-opacity-50 absolute inset-0"></div>
-            <div class="relative z-10 text-white max-w-2xl px-4">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">Connecting Patients and Doctors Seamlessly</h2>
-                <p class="text-lg mb-6 opacity-90">
-                    Healthcare Eclipse is your all-in-one platform for managing healthcare needs. Book appointments,
-                    consult with doctors online, and access emergency services with ease.
-                </p>
-                 <div class="loader-container my-4">
-                    <div class="loader">
-                      <p>Connecting</p>
-                      <div class="words">
-                        <span class="word">patients</span>
-                        <span class="word">doctors</span>
-                        <span class="word">hospitals</span>
-                        <span class="word">clinics</span>
-                        <span class="word">patients</span>
-                      </div>
-                    </div>
-                </div>
-                <div class="space-x-3">
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">For Doctors</button>
-                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md">For Patients</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Services Section -->
-        <section id="services" class="py-16 bg-gray-50 dark:bg-gray-900">
-            <div class="max-w-6xl mx-auto text-center px-4">
-                <h3 class="text-3xl font-semibold mb-4">Our Services</h3>
-                <p class="text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
-                    Healthcare Eclipse offers a range of services to meet all your healthcare needs, powered by cutting-edge technology to ensure your well-being.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                     <!-- Service Cards -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="text-blue-600 text-4xl mb-3">📅</div>
-                        <h4 class="font-semibold text-lg mb-2">Appointment Booking</h4>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Schedule appointments effortlessly with trusted healthcare professionals.</p>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="text-blue-600 text-4xl mb-3">💬</div>
-                        <h4 class="font-semibold text-lg mb-2">Online Consultations</h4>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Connect virtually with doctors for instant medical advice and follow-ups.</p>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="text-blue-600 text-4xl mb-3">⚕️</div>
-                        <h4 class="font-semibold text-lg mb-2">Emergency Services</h4>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Access 24/7 emergency services and locate nearby hospitals in seconds.</p>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="text-blue-600 text-4xl mb-3">📊</div>
-                        <h4 class="font-semibold text-lg mb-2">Health Analytics</h4>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Track trends in your vitals and get AI-based predictions for silent diseases.</p>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="text-blue-600 text-4xl mb-3">🧠</div>
-                        <h4 class="font-semibold text-lg mb-2">AI Health Detective</h4>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Detect early symptoms of diabetes, thyroid, or hypertension with AI insights.</p>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="text-blue-600 text-4xl mb-3">👨‍⚕️</div>
-                        <h4 class="font-semibold text-lg mb-2">Doctor Dashboard</h4>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Enable doctors to visualize patterns, risks, and patient history instantly.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <main id="main-content">
+             <!-- This div will contain either the landing page or the dashboard -->
+        </main>
 
         <!-- Login/Register Modal -->
         <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -556,213 +538,324 @@
                  <!-- Modal content will be injected here by JavaScript -->
             </div>
         </div>
-
-
-        <!-- Footer Section -->
-        <footer id="contact" class="py-16 bg-gray-900 dark:bg-black text-gray-300">
-            <div class="max-w-6xl mx-auto px-4">
-                <h4 class="text-2xl font-semibold mb-8 text-center text-white">Leadership Team</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 justify-center items-center gap-8 mb-12">
-                    <div class="p-4 text-center">
-                        <h5 class="font-semibold text-white">Devansh Rajpoot</h5>
-                        <p class="text-gray-400 text-sm">CEO & Founder</p>
-                    </div>
-                    <div class="p-4 text-center">
-                        <h5 class="font-semibold text-white">Piyush Dekate</h5>
-                        <p class="text-gray-400 text-sm">Chief Technology Officer</p>
-                    </div>
-                    <div class="p-4 text-center">
-                        <h5 class="font-semibold text-white">Nupur Mehar</h5>
-                        <p class="text-gray-400 text-sm">Head of Operations</p>
-                    </div>
-                    <div class="p-4 text-center">
-                        <h5 class="font-semibold text-white">Pragati Shelke</h5>
-                        <p class="text-gray-400 text-sm">Chief Medical Advisor</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left mt-8 border-t border-gray-700 pt-8">
-                    <div>
-                        <h5 class="text-white font-semibold mb-3">Quick Links</h5>
-                        <ul class="space-y-2 text-gray-400 text-sm">
-                            <li><a href="#about" class="hover:text-white transition">About Us</a></li>
-                            <li><a href="#services" class="hover:text-white transition">Our Services</a></li>
-                            <li><a href="#" class="hover:text-white transition">Careers</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h5 class="text-white font-semibold mb-3">Contact Info</h5>
-                        <p class="text-gray-400 text-sm">📍 SIT,Nagpur,Maharastra India</p>
-                        <a href="mailto:devanshrajpoot2008@gmail.com"><p class="text-gray-400 text-sm">📧 devanshrajpoot2008@gmail.com</p></a>
-                        <p class="text-gray-400 text-sm">📞 +91 90266 05300</p>
-
-                    </div>
-                    <div class="flex flex-col items-center md:items-start">
-                        <h5 class="text-white font-semibold mb-3">Follow Us</h5>
-                        <ul class="wrapper">
-                            <li class="icon facebook">
-                              <span class="tooltip">Facebook</span>
-                              <svg viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg>
-                            </li>
-                            <li class="icon twitter">
-                              <span class="tooltip">Twitter</span>
-                              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"></path></svg>
-                            </li>
-                            <li class="icon instagram">
-                              <span class="tooltip">Instagram</span>
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path></svg>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <p class="text-gray-500 text-sm mt-10 text-center">© 2025 Healthcare Eclipse. All rights reserved.</p>
-            </div>
-        </footer>
     </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loader = document.getElementById('loader');
-            const mainContent = document.getElementById('main-content');
+            const appContainer = document.getElementById('app-container');
             
+            // --- LOADER LOGIC ---
             setTimeout(() => {
-                loader.style.opacity = '0';
-                // Wait for fade out animation to finish before hiding it completely
-                setTimeout(() => {
-                    loader.classList.add('hidden');
-                }, 500);
-                mainContent.classList.remove('hidden');
-            }, 1400); // Corresponds to the animation duration
-            
-            const loginBtn = document.getElementById('login-btn');
-            const registerBtn = document.getElementById('register-btn');
-            const modalBackdrop = document.getElementById('modal-backdrop');
-            const modalContent = document.getElementById('modal-content');
-            const authButtons = document.getElementById('auth-buttons');
-            const welcomeMessage = document.getElementById('welcome-message');
-            const themeToggle = document.getElementById('checkbox');
+                loader.classList.add('hidden');
+                appContainer.style.visibility = 'visible';
+                appContainer.style.opacity = '1';
+                initializeApp();
+            }, 1400); 
 
-            // Set initial theme based on checkbox
-            if(themeToggle.checked) {
-                document.documentElement.classList.remove('dark');
-            } else {
-                document.documentElement.classList.add('dark');
-            }
+            function initializeApp() {
+                // All the application logic goes here
+                const mainContent = document.getElementById('main-content');
+                const authContainer = document.getElementById('auth-container');
+                const authButtons = document.getElementById('auth-buttons');
+                const userInfo = document.getElementById('user-info');
+                const welcomeMessage = document.getElementById('welcome-message');
+                const logoutBtn = document.getElementById('logout-btn');
+                
+                const loginBtn = document.getElementById('login-btn');
+                const registerBtn = document.getElementById('register-btn');
+                const modalBackdrop = document.getElementById('modal-backdrop');
+                const modalContent = document.getElementById('modal-content');
+                const themeToggle = document.getElementById('checkbox');
+                
+                let currentUser = null;
 
+                // Templates for different views
+                const landingPageTemplate = `
+                    <div id="landing-page-content">
+                        <!-- Hero Section -->
+                        <section class="relative bg-black h-[70vh] flex flex-col items-center justify-center text-center mt-20">
+                            <div class="bg-black bg-opacity-50 absolute inset-0"></div>
+                            <div class="relative z-10 text-white max-w-2xl px-4">
+                                <h2 class="text-4xl md:text-5xl font-bold mb-4 shiny-text">Connecting Patients and Doctors Seamlessly</h2>
+                                <p class="text-lg mb-6 opacity-90">
+                                    Healthcare Eclipse is your all-in-one platform for managing healthcare needs. Book appointments,
+                                    consult with doctors online, and access emergency services with ease.
+                                </p>
+                                 <div class="loader-container my-4">
+                                    <div class="loader">
+                                      <p>Connecting</p>
+                                      <div class="words">
+                                        <span class="word">patients</span>
+                                        <span class="word">doctors</span>
+                                        <span class="word">hospitals</span>
+                                        <span class="word">clinics</span>
+                                        <span class="word">patients</span>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
-            themeToggle.addEventListener('change', function() {
-                if(this.checked) {
-                    document.documentElement.classList.remove('dark');
-                } else {
-                    document.documentElement.classList.add('dark');
-                }
-            });
+                        <!-- Services Section -->
+                        <section id="services" class="py-16 bg-gray-50 dark:bg-gray-900">
+                             <div class="max-w-6xl mx-auto text-center px-4">
+                                <h3 class="text-3xl font-semibold mb-4">Our Services</h3>
+                                <p class="text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+                                    Healthcare Eclipse offers a range of services to meet all your healthcare needs, powered by cutting-edge technology to ensure your well-being.
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">📅</div><h4 class="font-semibold text-lg mb-2">Appointment Booking</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Schedule appointments effortlessly with trusted healthcare professionals.</p></div>
+                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">💬</div><h4 class="font-semibold text-lg mb-2">Online Consultations</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Connect virtually with doctors for instant medical advice and follow-ups.</p></div>
+                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">⚕️</div><h4 class="font-semibold text-lg mb-2">Emergency Services</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Access 24/7 emergency services and locate nearby hospitals in seconds.</p></div>
+                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">📊</div><h4 class="font-semibold text-lg mb-2">Health Analytics</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Track trends in your vitals and get AI-based predictions for silent diseases.</p></div>
+                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">🧠</div><h4 class="font-semibold text-lg mb-2">AI Health Detective</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Detect early symptoms of diabetes, thyroid, or hypertension with AI insights.</p></div>
+                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">👨‍⚕️</div><h4 class="font-semibold text-lg mb-2">Doctor Dashboard</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Enable doctors to visualize patterns, risks, and patient history instantly.</p></div>
+                                </div>
+                            </div>
+                        </section>
 
-            let user = null;
-
-            function showModal(type) {
-                modalBackdrop.classList.remove('hidden');
-                let formHtml = '';
-                if (type === 'login') {
-                    formHtml = `
-                        <h3 class="text-xl font-semibold mb-4 text-center">Login</h3>
-                        <form id="login-form" class="space-y-4">
-                            <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                            <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Login</button>
-                            <p class="text-sm text-center text-gray-600 dark:text-gray-400">
-                                Don't have an account? <span id="switch-to-register" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Register</span>
-                            </p>
-                        </form>
-                        <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                        <!-- Footer Section -->
+                        <footer id="contact" class="py-16 bg-gray-900 dark:bg-black text-gray-300">
+                             <div class="max-w-6xl mx-auto px-4">
+                                <h4 class="text-2xl font-semibold mb-8 text-center text-white">Leadership Team</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 justify-center items-center gap-8 mb-12">
+                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Devansh Rajpoot</h5><p class="text-gray-400 text-sm">CEO & Founder</p></div>
+                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Piyush Dekate</h5><p class="text-gray-400 text-sm">Chief Technology Officer</p></div>
+                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Nupur Mehar</h5><p class="text-gray-400 text-sm">Head of Operations</p></div>
+                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Pragati Shelke</h5><p class="text-gray-400 text-sm">Chief Medical Advisor</p></div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left mt-8 border-t border-gray-700 pt-8">
+                                    <div><h5 class="text-white font-semibold mb-3">Quick Links</h5><ul class="space-y-2 text-gray-400 text-sm"><li><a href="#about" class="hover:text-white transition">About Us</a></li><li><a href="#services" class="hover:text-white transition">Our Services</a></li><li><a href="#" class="hover:text-white transition">Careers</a></li></ul></div>
+                                    <div><h5 class="text-white font-semibold mb-3">Contact Info</h5><p class="text-gray-400 text-sm">📍SIT,Nagpur,Maharastra India</p><a href="mailto:devanshrajpoot2008@gmail.com"><p class="text-gray-400 text-sm">📧 devanshrajpoot2008@gmail.com</p></a><p class="text-gray-400 text-sm">📞 +91 90266 05300</p></div>
+                                    <div class="flex flex-col items-center md:items-start"><h5 class="text-white font-semibold mb-3">Follow Us</h5><ul class="wrapper"><li class="icon facebook"><span class="tooltip">Facebook</span><svg viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></li><li class="icon twitter"><span class="tooltip">Twitter</span><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"></path></svg></li><li class="icon instagram"><span class="tooltip">Instagram</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path></svg></li></ul></div>
+                                </div>
+                                <p class="text-gray-500 text-sm mt-10 text-center">© 2025 Healthcare Eclipse. All rights reserved.</p>
+                            </div>
+                        </footer>
+                    </div>
+                `;
+                
+                function getPatientDashboardTemplate(user) {
+                    return `
+                        <div id="patient-dashboard" class="p-8 pt-28">
+                            <h2 class="text-3xl font-bold mb-4">Patient Dashboard</h2>
+                            <p class="mb-8 text-lg">Welcome back, <span class="font-semibold">${user.firstName} ${user.lastName}</span>!</p>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Your Information</h3>
+                                    <p><strong>Email:</strong> ${user.email}</p>
+                                    <p><strong>Date of Birth:</strong> ${user.dob}</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Upcoming Appointments</h3>
+                                    <p class="text-gray-500 dark:text-gray-400">You have no upcoming appointments.</p>
+                                </div>
+                                <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Your Health Records</h3>
+                                    <p class="text-gray-500 dark:text-gray-400">No health records found.</p>
+                                </div>
+                            </div>
+                        </div>
                     `;
-                } else {
-                    formHtml = `
-                        <h3 class="text-xl font-semibold mb-4 text-center">Register</h3>
-                        <form id="register-form" class="space-y-4">
-                            <input type="text" name="firstName" placeholder="First Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                            <input type="text" name="lastName" placeholder="Last Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                            <input type="date" name="dob" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500 dark:bg-gray-700 dark:border-gray-600" required />
-                            <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                            <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                             <button type="submit" class="glowing-button w-full">
-                                Register
-                             </button>
-                             <p class="text-sm text-center text-gray-600 dark:text-gray-400">
-                                Already have an account? <span id="switch-to-login" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Login</span>
-                            </p>
-                        </form>
-                        <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                }
+
+                function getDoctorDashboardTemplate(user) {
+                    return `
+                        <div id="doctor-dashboard" class="p-8 pt-28">
+                            <h2 class="text-3xl font-bold mb-4">Doctor Dashboard</h2>
+                            <p class="mb-8 text-lg">Welcome back, <span class="font-semibold">Dr. ${user.lastName}</span>!</p>
+                             <div class="grid md:grid-cols-2 gap-8">
+                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Your Information</h3>
+                                    <p><strong>Email:</strong> ${user.email}</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Your Schedule</h3>
+                                    <p class="text-gray-500 dark:text-gray-400">Your schedule is clear for today.</p>
+                                </div>
+                                <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                                    <h3 class="text-xl font-semibold mb-4">Patient List</h3>
+                                    <p class="text-gray-500 dark:text-gray-400">You have no patients assigned yet.</p>
+                                </div>
+                            </div>
+                        </div>
                     `;
                 }
-                modalContent.innerHTML = formHtml;
-            }
 
-            function closeModal() {
-                modalBackdrop.classList.add('hidden');
-                modalContent.innerHTML = '';
-            }
-            
-            function updateUserUI(userData) {
-                user = userData;
-                if(user) {
-                    authButtons.classList.add('hidden');
-                    welcomeMessage.textContent = `Welcome, ${user.name || user.email}`;
-                    welcomeMessage.classList.remove('hidden');
+                function showView(viewTemplate) {
+                    mainContent.innerHTML = viewTemplate;
+                    if(viewTemplate === landingPageTemplate) {
+                         // Re-initialize the scroll observer for the landing page
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach((entry, index) => {
+                                if (entry.isIntersecting) {
+                                    setTimeout(() => {
+                                        entry.target.classList.add('is-visible');
+                                    }, index * 150);
+                                    observer.unobserve(entry.target);
+                                }
+                            });
+                        }, { threshold: 0.1 });
+                        const serviceCards = document.querySelectorAll('.service-card');
+                        serviceCards.forEach(card => observer.observe(card));
+                    }
                 }
-            }
 
-
-            loginBtn.addEventListener('click', () => showModal('login'));
-            
-            // Event listener for the new register button
-            document.body.addEventListener('click', function(event) {
-                // Find the closest button with the ID
-                const registerButton = event.target.closest('#register-btn');
-                if (registerButton) {
-                    showModal('register');
+                function updateHeader() {
+                    if (currentUser) {
+                        authButtons.classList.add('hidden');
+                        userInfo.classList.remove('hidden');
+                        userInfo.classList.add('flex');
+                        welcomeMessage.textContent = `Welcome, ${currentUser.firstName}!`;
+                    } else {
+                        authButtons.classList.remove('hidden');
+                        userInfo.classList.add('hidden');
+                        userInfo.classList.remove('flex');
+                    }
                 }
-            });
+                
+                function showModal(type) {
+                    modalBackdrop.classList.remove('hidden');
+                    let formHtml = '';
+                    if (type === 'login') {
+                        formHtml = `
+                            <h3 class="text-xl font-semibold mb-4 text-center">Login</h3>
+                            <form id="login-form" class="space-y-4">
+                                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+                                <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Login</button>
+                                <p class="text-sm text-center text-gray-600 dark:text-gray-400">Don't have an account? <span id="switch-to-register" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Register</span></p>
+                            </form>
+                            <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                        `;
+                    } else {
+                        formHtml = `
+                            <h3 class="text-xl font-semibold mb-4 text-center">Register</h3>
+                            <form id="register-form" class="space-y-4">
+                                <p id="register-error" class="text-red-500 text-sm text-center hidden"></p>
+                                <input type="text" name="firstName" placeholder="First Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <input type="text" name="lastName" placeholder="Last Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <input type="date" name="dob" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                                <div class="flex items-center justify-center space-x-4"><label>I am a:</label>
+                                    <input type="radio" id="patient" name="role" value="patient" checked><label for="patient">Patient</label>
+                                    <input type="radio" id="doctor" name="role" value="doctor"><label for="doctor">Doctor</label>
+                                </div>
+                                <button type="submit" class="glowing-button w-full">Register</button>
+                                <p class="text-sm text-center text-gray-600 dark:text-gray-400">Already have an account? <span id="switch-to-login" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Login</span></p>
+                            </form>
+                            <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                        `;
+                    }
+                    modalContent.innerHTML = formHtml;
+                }
 
-            
-            modalBackdrop.addEventListener('click', function(event) {
-                if (event.target === modalBackdrop) {
+                function closeModal() {
+                    modalBackdrop.classList.add('hidden');
+                    modalContent.innerHTML = '';
+                }
+
+                function handleLogin(e) {
+                    e.preventDefault();
+                    const email = e.target.email.value;
+                    const password = e.target.password.value;
+                    const users = JSON.parse(localStorage.getItem('healthcareUsers')) || [];
+                    const user = users.find(u => u.email === email && u.password === password);
+
+                    if (user) {
+                        currentUser = user;
+                        updateHeader();
+                        if (user.role === 'patient') {
+                            showView(getPatientDashboardTemplate(user));
+                        } else {
+                            showView(getDoctorDashboardTemplate(user));
+                        }
+                        closeModal();
+                    } else {
+                        const errorEl = document.getElementById('login-error');
+                        errorEl.textContent = 'Invalid email or password.';
+                        errorEl.classList.remove('hidden');
+                    }
+                }
+
+                function handleRegister(e) {
+                    e.preventDefault();
+                    const users = JSON.parse(localStorage.getItem('healthcareUsers')) || [];
+                    const email = e.target.email.value;
+                    const errorEl = document.getElementById('register-error');
+
+                    if (users.find(u => u.email === email)) {
+                        errorEl.textContent = 'A user with this email already exists.';
+                        errorEl.classList.remove('hidden');
+                        return;
+                    }
+
+                    const newUser = {
+                        firstName: e.target.firstName.value,
+                        lastName: e.target.lastName.value,
+                        dob: e.target.dob.value,
+                        email: email,
+                        password: e.target.password.value,
+                        role: e.target.role.value
+                    };
+                    
+                    users.push(newUser);
+                    localStorage.setItem('healthcareUsers', JSON.stringify(users));
                     closeModal();
-                }
-            });
-
-            // Using event delegation for dynamically added elements
-            document.addEventListener('click', function(event) {
-                if (event.target.id === 'close-modal') {
-                    closeModal();
-                }
-                if (event.target.id === 'switch-to-register') {
-                    showModal('register');
-                }
-                if (event.target.id === 'switch-to-login') {
+                    alert('Registration successful! Please log in.');
                     showModal('login');
                 }
-            });
+                
+                function handleLogout() {
+                    currentUser = null;
+                    updateHeader();
+                    showView(landingPageTemplate);
+                }
 
-            document.addEventListener('submit', function(event) {
-                 event.preventDefault();
-                 if (event.target.id === 'login-form') {
-                    const email = event.target.email.value;
-                    if(email) {
-                        updateUserUI({ email: email });
-                        closeModal();
-                    }
-                 }
-                 if (event.target.id === 'register-form') {
-                    const firstName = event.target.firstName.value;
-                    const email = event.target.email.value;
-                    if(firstName && email) {
-                        updateUserUI({ name: firstName, email: email });
-                        closeModal();
-                    }
-                 }
-            });
+                // Initial setup
+                showView(landingPageTemplate);
+                updateHeader();
+
+                // Event Listeners
+                loginBtn.addEventListener('click', () => showModal('login'));
+                registerBtn.addEventListener('click', () => showModal('register'));
+                logoutBtn.addEventListener('click', handleLogout);
+                modalBackdrop.addEventListener('click', e => (e.target === modalBackdrop) && closeModal());
+                
+                document.body.addEventListener('click', e => {
+                    if (e.target.id === 'close-modal') closeModal();
+                    if (e.target.id === 'switch-to-register') showModal('register');
+                    if (e.target.id === 'switch-to-login') showModal('login');
+                });
+                
+                document.body.addEventListener('submit', e => {
+                    if (e.target.id === 'login-form') handleLogin(e);
+                    if (e.target.id === 'register-form') handleRegister(e);
+                });
+
+                if(themeToggle.checked) document.documentElement.classList.remove('dark');
+                else document.documentElement.classList.add('dark');
+                themeToggle.addEventListener('change', function() {
+                    document.documentElement.classList.toggle('dark', !this.checked);
+                });
+            }
+
+            // --- Simplified Loader Logic ---
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                const appContainer = document.getElementById('app-container');
+
+                loader.classList.add('hidden');
+                appContainer.style.visibility = 'visible';
+                appContainer.style.opacity = '1';
+                
+                initializeApp();
+            }, 1400);
+
         });
     </script>
 </body>
