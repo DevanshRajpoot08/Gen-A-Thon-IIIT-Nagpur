@@ -1,228 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HealthConnect</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Eclipse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Styles for animated underline on nav links */
+        .nav-link-underline {
+            position: relative;
+        }
+        .nav-link-underline::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -3px;
+            left: 0;
+            background-color: #2563eb;
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link-underline:hover::after {
+            width: 100%;
+        }
 
-  <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
+        /* Fade-in animation for modal */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
 
-    /* Navbar */
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 60px;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
+        /* Styles for social media icons */
+        .wrapper {
+            display: inline-flex;
+            list-style: none;
+            padding: 0;
+        }
 
-    .logo {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #0078d7;
-    }
+        .wrapper .icon {
+            position: relative;
+            background: #ffffff;
+            border-radius: 50%;
+            padding: 15px;
+            margin: 10px;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-    .navbar ul {
-      list-style: none;
-      display: flex;
-      gap: 25px;
-    }
+        .wrapper .tooltip {
+            position: absolute;
+            top: 0;
+            font-size: 14px;
+            background: #ffffff;
+            color: #ffffff;
+            padding: 5px 8px;
+            border-radius: 5px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-    .navbar ul li a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
+        .wrapper .icon:hover .tooltip {
+            top: -45px;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
 
-    .auth-buttons button {
-      margin-left: 10px;
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: 1px solid #0078d7;
-      background: transparent;
-      cursor: pointer;
-      font-weight: 500;
-    }
+        .wrapper .icon:hover span,
+        .wrapper .icon:hover .tooltip {
+            text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+        }
 
-    .auth-buttons .register {
-      background: #0078d7;
-      color: white;
-      border: none;
-    }
+        .wrapper .facebook:hover,
+        .wrapper .facebook:hover .tooltip,
+        .wrapper .facebook:hover .tooltip::before {
+            background: #1877F2;
+            color: #ffffff;
+        }
 
-    /* Hero Section */
-    .hero {
-      background: url('https://images.unsplash.com/photo-1576765607924-bd818d3e4b0e?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
-      color: white;
-      text-align: center;
-      padding: 140px 20px;
-      background-blend-mode: multiply;
-      background-color: rgba(0,0,0,0.4);
-    }
+        .wrapper .twitter:hover,
+        .wrapper .twitter:hover .tooltip,
+        .wrapper .twitter:hover .tooltip::before {
+            background: #1DA1F2;
+            color: #ffffff;
+        }
 
-    .hero h1 {
-      font-size: 2.4rem;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
+        .wrapper .instagram:hover,
+        .wrapper .instagram:hover .tooltip,
+        .wrapper .instagram:hover .tooltip::before {
+            background: #E4405F;
+            color: #ffffff;
+        }
+        .wrapper .icon svg {
+             width: 24px;
+             height: 24px;
+             fill: #333;
+             transition: all 0.2s;
+        }
+        .wrapper .icon:hover svg {
+            fill: #fff;
+        }
+        
+        /* From Uiverse.io by JustCode14 */
+        /* Theme Switch */
+        /* The switch - the box around the slider */
+        .switch {
+          font-size: 17px;
+          position: relative;
+          display: inline-block;
+          width: 4em;
+          height: 2.2em;
+          border-radius: 30px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .hero p {
-      max-width: 600px;
-      margin: 0 auto 30px;
-      font-size: 1rem;
-      line-height: 1.6;
-    }
+        /* Hide default HTML checkbox */
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
 
-    .hero-buttons button {
-      margin: 8px;
-      padding: 12px 25px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
+        /* The slider */
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #2a2a2a;
+          transition: 0.4s;
+          border-radius: 30px;
+          overflow: hidden;
+        }
 
-    .hero-buttons .primary {
-      background: #0078d7;
-      color: white;
-    }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 1.2em;
+          width: 1.2em;
+          border-radius: 20px;
+          left: 0.5em;
+          bottom: 0.5em;
+          transition: 0.4s;
+          transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
+          box-shadow: inset 8px -4px 0px 0px #fff;
+        }
 
-    .hero-buttons .secondary {
-      background: white;
-      color: #0078d7;
-    }
+        .switch input:checked + .slider {
+          background-color: #00a6ff;
+        }
 
-    /* Services Section */
-    .services {
-      text-align: center;
-      padding: 80px 20px;
-      background: #f9fbfc;
-    }
+        .switch input:checked + .slider:before {
+          transform: translateX(1.8em);
+          box-shadow: inset 15px -4px 0px 15px #ffcf48;
+        }
 
-    .services h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
+        .star {
+          background-color: #fff;
+          border-radius: 50%;
+          position: absolute;
+          width: 5px;
+          transition: all 0.4s;
+          height: 5px;
+        }
 
-    .services p {
-      color: #555;
-      margin-bottom: 40px;
-    }
+        .star_1 {
+          left: 2.5em;
+          top: 0.5em;
+        }
 
-    .service-cards {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
+        .star_2 {
+          left: 2.2em;
+          top: 1.2em;
+        }
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      width: 250px;
-      padding: 30px 20px;
-      text-align: center;
-      transition: transform 0.2s;
-    }
+        .star_3 {
+          left: 3em;
+          top: 0.9em;
+        }
 
-    .card:hover {
-      transform: translateY(-5px);
-    }
+        .switch input:checked ~ .slider .star {
+          opacity: 0;
+        }
 
-    .icon {
-      font-size: 2rem;
-      margin-bottom: 15px;
-      color: #0078d7;
-    }
+        .cloud {
+          width: 3.5em;
+          position: absolute;
+          bottom: -1.4em;
+          left: -1.1em;
+          opacity: 0;
+          transition: all 0.4s;
+        }
 
-    .card h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .navbar {
-        flex-direction: column;
-        gap: 15px;
-      }
-      .hero h1 {
-        font-size: 1.8rem;
-      }
-      .hero p {
-        font-size: 0.95rem;
-      }
-      .service-cards {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-  </style>
+        .switch input:checked ~ .slider .cloud {
+          opacity: 1;
+        }
+    </style>
 </head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
 
-<body>
+    <!-- Navbar -->
+    <header class="flex justify-between items-center px-8 py-4 shadow-sm bg-white dark:bg-gray-800 fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center space-x-2">
+            <img src="https://placehold.co/40x40/2563eb/ffffff?text=HE" alt="Healthcare Eclipse Logo" class="w-10 h-10 rounded-full">
+            <h1 class="text-xl font-bold">Healthcare Eclipse</h1>
+        </div>
+        <nav class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="#about" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">About</a>
+            <a href="#services" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Services</a>
+            <a href="#features" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Features</a>
+            <a href="#contact" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Contact</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <label class="switch">
+              <input checked="true" id="checkbox" type="checkbox" />
+              <span class="slider">
+                <div class="star star_1"></div>
+                <div class="star star_2"></div>
+                <div class="star star_3"></div>
+                <svg viewBox="0 0 16 16" class="cloud_1 cloud">
+                  <path
+                    transform="matrix(.77976 0 0 .78395-299.99-418.63)"
+                    fill="#fff"
+                    d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
+                  ></path>
+                </svg>
+              </span>
+            </label>
+            <div class="space-x-3" id="auth-buttons">
+                <button id="login-btn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700">Login</button>
+                <button id="register-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">Register</button>
+            </div>
+             <div id="welcome-message" class="hidden font-medium text-blue-600 dark:text-blue-400"></div>
+        </div>
+    </header>
 
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">🩺 HealthConnect</div>
-    <nav>
-      <ul>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </nav>
-    <div class="auth-buttons">
-      <button class="login">Login</button>
-      <button class="register">Register</button>
+    <!-- Hero Section -->
+    <section class="relative bg-cover bg-center h-[70vh] flex flex-col items-center justify-center text-center mt-20" style="background-image: url('https://placehold.co/1920x1080/cccccc/ffffff?text=Hospital+Background');">
+        <div class="bg-black bg-opacity-50 absolute inset-0"></div>
+        <div class="relative z-10 text-white max-w-2xl px-4">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Connecting Patients and Doctors Seamlessly</h2>
+            <p class="text-lg mb-6 opacity-90">
+                Healthcare Eclipse is your all-in-one platform for managing healthcare needs. Book appointments,
+                consult with doctors online, and access emergency services with ease.
+            </p>
+            <div class="space-x-3">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">For Doctors</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md">For Patients</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-6xl mx-auto text-center px-4">
+            <h3 class="text-3xl font-semibold mb-4">Our Services</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+                Healthcare Eclipse offers a range of services to meet all your healthcare needs, powered by cutting-edge technology to ensure your well-being.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                 <!-- Service Cards -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="text-blue-600 text-4xl mb-3">📅</div>
+                    <h4 class="font-semibold text-lg mb-2">Appointment Booking</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Schedule appointments effortlessly with trusted healthcare professionals.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="text-blue-600 text-4xl mb-3">💬</div>
+                    <h4 class="font-semibold text-lg mb-2">Online Consultations</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Connect virtually with doctors for instant medical advice and follow-ups.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="text-blue-600 text-4xl mb-3">⚕️</div>
+                    <h4 class="font-semibold text-lg mb-2">Emergency Services</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Access 24/7 emergency services and locate nearby hospitals in seconds.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="text-blue-600 text-4xl mb-3">📊</div>
+                    <h4 class="font-semibold text-lg mb-2">Health Analytics</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Track trends in your vitals and get AI-based predictions for silent diseases.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="text-blue-600 text-4xl mb-3">🧠</div>
+                    <h4 class="font-semibold text-lg mb-2">AI Health Detective</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Detect early symptoms of diabetes, thyroid, or hypertension with AI insights.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="text-blue-600 text-4xl mb-3">👨‍⚕️</div>
+                    <h4 class="font-semibold text-lg mb-2">Doctor Dashboard</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Enable doctors to visualize patterns, risks, and patient history instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login/Register Modal -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-sm relative animate-fade-in">
+             <!-- Modal content will be injected here by JavaScript -->
+        </div>
     </div>
-  </header>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Connecting Patients and Doctors Seamlessly</h1>
-      <p>
-        HealthConnect is your all-in-one platform for managing your healthcare needs.
-        Book appointments, consult with doctors online, and access emergency services with ease.
-      </p>
-      <div class="hero-buttons">
-        <button class="primary">For Doctors</button>
-        <button class="secondary">For Patients</button>
-      </div>
-    </div>
-  </section>
 
-  <!-- Services Section -->
-  <section class="services">
-    <h2>Our Services</h2>
-    <p>HealthConnect offers a range of services to meet your healthcare needs.</p>
+    <!-- Footer Section -->
+    <footer id="contact" class="py-16 bg-gray-900 dark:bg-black text-gray-300">
+        <div class="max-w-6xl mx-auto px-4">
+            <h4 class="text-2xl font-semibold mb-8 text-center text-white">Leadership Team</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 justify-center items-center gap-8 mb-12">
+                <div class="p-4 text-center">
+                    <h5 class="font-semibold text-white">Dr. Ananya Mehta</h5>
+                    <p class="text-gray-400 text-sm">CEO & Founder</p>
+                </div>
+                <div class="p-4 text-center">
+                    <h5 class="font-semibold text-white">Rajesh Kumar</h5>
+                    <p class="text-gray-400 text-sm">Chief Technology Officer</p>
+                </div>
+                <div class="p-4 text-center">
+                    <h5 class="font-semibold text-white">Priya Singh</h5>
+                    <p class="text-gray-400 text-sm">Head of Operations</p>
+                </div>
+                <div class="p-4 text-center">
+                    <h5 class="font-semibold text-white">Vikram Patel</h5>
+                    <p class="text-gray-400 text-sm">Chief Medical Advisor</p>
+                </div>
+            </div>
 
-    <div class="service-cards">
-      <div class="card">
-        <div class="icon">📅</div>
-        <h3>Appointment Booking</h3>
-      </div>
-      <div class="card">
-        <div class="icon">💬</div>
-        <h3>Online Consultations</h3>
-      </div>
-      <div class="card">
-        <div class="icon">❗</div>
-        <h3>Emergency Services</h3>
-      </div>
-    </div>
-  </section>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left mt-8 border-t border-gray-700 pt-8">
+                <div>
+                    <h5 class="text-white font-semibold mb-3">Quick Links</h5>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#about" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#services" class="hover:text-white transition">Our Services</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-white font-semibold mb-3">Contact Info</h5>
+                    <p class="text-gray-400 text-sm">📍 22 Medical Street, Bangalore, India</p>
+                    <p class="text-gray-400 text-sm">📧 support@healthcareeclipse.com</p>
+                    <p class="text-gray-400 text-sm">📞 +91 98765 43210</p>
+                </div>
+                <div class="flex flex-col items-center md:items-start">
+                    <h5 class="text-white font-semibold mb-3">Follow Us</h5>
+                    <ul class="wrapper">
+                        <li class="icon facebook">
+                          <span class="tooltip">Facebook</span>
+                          <svg viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg>
+                        </li>
+                        <li class="icon twitter">
+                          <span class="tooltip">Twitter</span>
+                          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"></path></svg>
+                        </li>
+                        <li class="icon instagram">
+                          <span class="tooltip">Instagram</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path></svg>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
+            <p class="text-gray-500 text-sm mt-10 text-center">© 2025 Healthcare Eclipse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('login-btn');
+            const registerBtn = document.getElementById('register-btn');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalContent = document.getElementById('modal-content');
+            const authButtons = document.getElementById('auth-buttons');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const themeToggle = document.getElementById('checkbox');
+
+            // Set initial theme based on checkbox
+            if(themeToggle.checked) {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+
+
+            themeToggle.addEventListener('change', function() {
+                if(this.checked) {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark');
+                }
+            });
+
+            let user = null;
+
+            function showModal(type) {
+                modalBackdrop.classList.remove('hidden');
+                let formHtml = '';
+                if (type === 'login') {
+                    formHtml = `
+                        <h3 class="text-xl font-semibold mb-4 text-center">Login</h3>
+                        <form id="login-form" class="space-y-4">
+                            <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Login</button>
+                            <p class="text-sm text-center text-gray-600 dark:text-gray-400">
+                                Don't have an account? <span id="switch-to-register" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Register</span>
+                            </p>
+                        </form>
+                        <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                    `;
+                } else {
+                    formHtml = `
+                        <h3 class="text-xl font-semibold mb-4 text-center">Register</h3>
+                        <form id="register-form" class="space-y-4">
+                            <input type="text" name="firstName" placeholder="First Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <input type="text" name="lastName" placeholder="Last Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <input type="date" name="dob" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Register</button>
+                             <p class="text-sm text-center text-gray-600 dark:text-gray-400">
+                                Already have an account? <span id="switch-to-login" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Login</span>
+                            </p>
+                        </form>
+                        <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                    `;
+                }
+                modalContent.innerHTML = formHtml;
+            }
+
+            function closeModal() {
+                modalBackdrop.classList.add('hidden');
+                modalContent.innerHTML = '';
+            }
+            
+            function updateUserUI(userData) {
+                user = userData;
+                if(user) {
+                    authButtons.classList.add('hidden');
+                    welcomeMessage.textContent = `Welcome, ${user.name || user.email}`;
+                    welcomeMessage.classList.remove('hidden');
+                }
+            }
+
+
+            loginBtn.addEventListener('click', () => showModal('login'));
+            registerBtn.addEventListener('click', () => showModal('register'));
+            
+            modalBackdrop.addEventListener('click', function(event) {
+                if (event.target === modalBackdrop) {
+                    closeModal();
+                }
+            });
+
+            // Using event delegation for dynamically added elements
+            document.addEventListener('click', function(event) {
+                if (event.target.id === 'close-modal') {
+                    closeModal();
+                }
+                if (event.target.id === 'switch-to-register') {
+                    showModal('register');
+                }
+                if (event.target.id === 'switch-to-login') {
+                    showModal('login');
+                }
+            });
+
+            document.addEventListener('submit', function(event) {
+                 event.preventDefault();
+                 if (event.target.id === 'login-form') {
+                    const email = event.target.email.value;
+                    if(email) {
+                        updateUserUI({ email: email });
+                        closeModal();
+                    }
+                 }
+                 if (event.target.id === 'register-form') {
+                    const firstName = event.target.firstName.value;
+                    const email = event.target.email.value;
+                    if(firstName && email) {
+                        updateUserUI({ name: firstName, email: email });
+                        closeModal();
+                    }
+                 }
+            });
+        });
+    </script>
 </body>
 </html>
+
