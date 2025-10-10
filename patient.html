@@ -65,6 +65,10 @@
                 <h2 class="text-3xl font-bold mb-4">Patient Dashboard</h2>
                 <p class="mb-8 text-lg">Welcome back, <span class="font-semibold" id="patient-name-display"></span>!</p>
 
+                <div id="medbot-analysis-container" class="mb-8 p-6 bg-blue-50 dark:bg-gray-700 rounded-xl shadow-inner border border-blue-200 dark:border-blue-600 hidden">
+                    <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-400 mb-3">MedBot AI Diagnosis</h3>
+                    <div id="medbot-analysis-content" class="text-gray-700 dark:text-gray-300">Click the MedBot icon to generate an analysis.</div>
+                </div>
                 <div id="health-results-container">
                     </div>
                 
@@ -127,6 +131,11 @@
                 </div>
             </div>
         </main>
+        
+        <button id="medbot-btn" class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-xl z-40 transition-transform duration-300 transform hover:scale-110">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 12h2m10 0h2M3 12a9 9 0 0118 0a9 9 0 01-18 0z"></path></svg>
+            <span class="sr-only">Ask MedBot</span>
+        </button>
     </div>
 
     <script src="script.js"></script>
@@ -164,6 +173,33 @@
                 `;
                 document.getElementById('health-record-form-container').classList.remove('hidden');
             }
+            
+            // --- MedBot specific logic ---
+            const medbotBtn = document.getElementById('medbot-btn');
+            const medbotContainer = document.getElementById('medbot-analysis-container');
+            const medbotContent = document.getElementById('medbot-analysis-content');
+
+            medbotBtn.addEventListener('click', function() {
+                const currentRecord = currentUser.healthRecord;
+                
+                // Clear and show loading state
+                medbotContent.innerHTML = `<div class="text-blue-500 font-semibold flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Running AI analysis on your latest data...</div>`;
+                medbotContainer.classList.remove('hidden');
+                medbotContainer.scrollIntoView({ behavior: 'smooth' });
+
+                setTimeout(() => {
+                    if (!currentRecord) {
+                        medbotContent.innerHTML = `
+                            <p class="text-red-500 font-semibold">Please submit your health record first in the section below to enable MedBot's detailed AI analysis.</p>
+                        `;
+                    } else {
+                        // Use the existing powerful function to generate the analysis
+                        medbotContent.innerHTML = generateHealthResultsHtml(currentRecord);
+                    }
+                }, 1000); // Simulate a short loading time
+            });
+            // --- End MedBot specific logic ---
+
         });
     </script>
 </body>

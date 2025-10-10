@@ -229,7 +229,7 @@ function generateHealthResultsHtml(record) {
 
     return `
         <div class="space-y-4">
-            <h3 class="text-2xl font-semibold text-blue-600 dark:text-blue-400">Health Analysis Results</h3>
+            <h3 class="text-xl font-semibold text-blue-600 dark:text-blue-400">Analysis Results</h3>
             ${warningHtml}
             ${medicineHtml}
             ${doctorListHtml}
