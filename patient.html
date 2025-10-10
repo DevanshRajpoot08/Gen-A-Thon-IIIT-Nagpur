@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - Healthcare Eclipse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link-underline { position: relative; }
+        .nav-link-underline::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -3px; left: 0; background-color: #2563eb; transition: width 0.3s ease-in-out; }
+        .nav-link-underline:hover::after { width: 100%; }
+        .required-field::after { content: '*'; color: red; margin-left: 2px; }
+        /* Include the theme switch/glowing button/loader styles here or in an external CSS file */
+        .switch { font-size: 13px; position: relative; display: inline-block; width: 4em; height: 2.2em; border-radius: 30px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a2a; transition: 0.4s; border-radius: 30px; overflow: hidden; }
+        .slider:before { position: absolute; content: ""; height: 1.2em; width: 1.2em; border-radius: 20px; left: 0.5em; bottom: 0.5em; transition: 0.4s; transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5); box-shadow: inset 8px -4px 0px 0px #fff; }
+        .switch input:checked + .slider { background-color: #00a6ff; }
+        .switch input:checked + .slider:before { transform: translateX(1.8em); box-shadow: inset 15px -4px 0px 15px #ffcf48; }
+        .star { background-color: #fff; border-radius: 50%; position: absolute; width: 5px; transition: all 0.4s; height: 5px; }
+        .star_1 { left: 2.5em; top: 0.5em; }
+        .star_2 { left: 2.2em; top: 1.2em; }
+        .star_3 { left: 3em; top: 0.9em; }
+        .switch input:checked ~ .slider .star { opacity: 0; }
+        .cloud { width: 3.5em; position: absolute; bottom: -1.4em; left: -1.1em; opacity: 0; transition: all 0.4s; }
+        .switch input:checked ~ .slider .cloud { opacity: 1; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out, visibility 0.5s; opacity: 1; visibility: visible; }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+        .glowing-button { position: relative; padding: 10px 20px; border-radius: 7px; border: 1px solid rgb(61, 106, 255); font-size: 14px; text-transform: uppercase; font-weight: 600; letter-spacing: 2px; background: transparent; color: rgb(61, 106, 255); overflow: hidden; box-shadow: 0 0 0 0 transparent; -webkit-transition: all 0.2s ease-in; -moz-transition: all 0.2s ease-in; transition: all 0.2s ease-in; }
+        .dark .glowing-button { color: #fff; }
+        .glowing-button:hover { background: rgb(61, 106, 255); color: #fff; box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815); -webkit-transition: all 0.2s ease-out; -moz-transition: all 0.2s ease-out; transition: all 0.2s ease-out; }
+    </style>
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
+
+    <div id="app-container" style="visibility: hidden; opacity: 0; transition: opacity 0.5s ease-in;">
+        <header class="flex justify-between items-center px-8 py-4 shadow-sm bg-white dark:bg-gray-800 fixed top-0 left-0 right-0 z-50">
+            <div class="flex items-center space-x-2">
+                 <img src="logo.png" alt="Healthcare Eclipse Logo" class="w-10 h-10 rounded-full">
+                <h1 class="text-xl font-bold">Healthcare Eclipse</h1>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="frontpage.html" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Home</a>
+                <a href="#dashboard" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Dashboard</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <label class="switch"><input checked="true" id="checkbox" type="checkbox" /><span class="slider">...</span></label>
+                <div id="auth-container">
+                    <div id="user-info" class="hidden items-center space-x-4">
+                        <span id="welcome-message" class="font-medium text-blue-600 dark:text-blue-400"></span>
+                        <button id="logout-btn" class="px-4 py-2 border border-red-500 text-red-500 rounded-md text-sm font-medium hover:bg-red-500 hover:text-white dark:border-red-500 dark:hover:bg-red-600">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content" class="pt-20">
+            <div id="patient-dashboard" class="p-8 max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold mb-4">Patient Dashboard</h2>
+                <p class="mb-8 text-lg">Welcome back, <span class="font-semibold" id="patient-name-display"></span>!</p>
+
+                <div id="health-results-container">
+                    </div>
+                
+                <div class="grid md:grid-cols-2 gap-8 mt-8">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Your Information</h3>
+                        <p id="patient-email"><strong>Email:</strong> </p>
+                        <p id="patient-dob"><strong>Date of Birth:</strong> </p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Upcoming Appointments</h3>
+                        <div id="patient-appointments"></div>
+                    </div>
+                    <div id="current-health-record-section" class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Your Latest Health Record</h3>
+                        <div id="health-record-display"></div>
+                        <button id="update-health-record-btn" class="mt-4 px-4 py-2 border border-blue-500 text-blue-500 rounded-md text-sm font-medium hover:bg-blue-500 hover:text-white dark:border-blue-400 dark:hover:bg-blue-600 hidden">Update Record</button>
+                    </div>
+
+                    <div id="health-record-form-container" class="md:col-span-2 hidden">
+                        <form id="health-record-form" class="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-blue-200 dark:border-blue-700">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Input Your Health Records</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Weight (kg)</label><input type="number" step="0.1" name="weight" placeholder="e.g. 70.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Height (cm)</label><input type="number" name="height" placeholder="e.g. 175" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Gender</label>
+                                    <select name="gender" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required>
+                                        <option value="">Select Gender</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">BP Systolic (mmHg)</label><input type="number" name="bpSystolic" placeholder="e.g. 120" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">BP Diastolic (mmHg)</label><input type="number" name="bpDiastolic" placeholder="e.g. 80" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Heart Rate (bpm)</label><input type="number" name="heartRate" placeholder="e.g. 75" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Blood Sugar (mg/dL)</label><input type="number" name="bloodSugar" placeholder="e.g. 95" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Sleep Duration (hours)</label><input type="number" step="0.5" name="sleepDuration" placeholder="e.g. 7.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Exercise (minutes/day)</label><input type="number" name="exerciseMinutes" placeholder="e.g. 30" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1"><label class="block mb-2 font-medium required-field">Water Intake (litres)</label><input type="number" step="0.1" name="waterIntake" placeholder="e.g. 2.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required /></div>
+                                <div class="col-span-1">
+                                    <label class="block mb-2 font-medium required-field">Stress Level (1-10)</label>
+                                    <input type="range" name="stressLevel" min="1" max="10" value="5" oninput="this.nextElementSibling.value=this.value" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" required />
+                                    <output>5</output>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block mb-2 font-medium required-field">Alcohol/Smoking</label>
+                                    <select name="alcoholSmoking" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required>
+                                        <option value="none">None</option><option value="social_alcohol">Social Alcohol</option><option value="regular_alcohol">Regular Alcohol</option><option value="smoker">Smoker</option><option value="both">Both</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-span-full"><label class="block mb-2 font-medium">Current Symptoms (comma separated)</label><input type="text" name="symptoms" placeholder="e.g. headache, fatigue, mild fever" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" /></div>
+                            <div class="col-span-full"><label class="block mb-2 font-medium">Additional Notes</label><textarea name="additionalNotes" rows="3" placeholder="Any other relevant information..." class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600"></textarea></div>
+                            
+                            <button type="submit" class="glowing-button w-full">Submit Health Record</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for logged-in user and ensure they are a patient
+            if (!currentUser || currentUser.role !== 'patient') {
+                window.location.href = 'frontpage.html';
+                return;
+            }
+
+            const record = currentUser.healthRecord;
+            
+            // Populate static user info
+            document.getElementById('patient-name-display').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+            document.getElementById('patient-email').innerHTML = `<strong>Email:</strong> ${currentUser.email}`;
+            document.getElementById('patient-dob').innerHTML = `<strong>Date of Birth:</strong> ${currentUser.dob}`;
+            
+            // Populate dynamic sections
+            document.getElementById('patient-appointments').innerHTML = getPatientAppointmentsHtml(currentUser.email);
+            document.getElementById('health-record-display').innerHTML = formatHealthRecord(record);
+
+            if (record) {
+                // Show results and update button if record exists
+                document.getElementById('health-results-container').innerHTML = generateHealthResultsHtml(record);
+                document.getElementById('update-health-record-btn').classList.remove('hidden');
+                document.getElementById('health-record-form-container').classList.add('hidden');
+            } else {
+                // Show the empty record message and the form
+                document.getElementById('health-results-container').innerHTML = `
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg mb-8" role="alert">
+                        <p class="font-bold">Action Required</p>
+                        <p>Please submit your health records below to access personalized warnings, doctor recommendations, and medicine suggestions.</p>
+                    </div>
+                `;
+                document.getElementById('health-record-form-container').classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

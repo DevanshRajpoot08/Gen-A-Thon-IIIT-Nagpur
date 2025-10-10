@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Healthcare Eclipse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .glowing-button { position: relative; padding: 10px 20px; border-radius: 7px; border: 1px solid rgb(61, 106, 255); font-size: 14px; text-transform: uppercase; font-weight: 600; letter-spacing: 2px; background: transparent; color: rgb(61, 106, 255); overflow: hidden; box-shadow: 0 0 0 0 transparent; -webkit-transition: all 0.2s ease-in; -moz-transition: all 0.2s ease-in; transition: all 0.2s ease-in; }
+        .dark .glowing-button { color: #fff; }
+        .glowing-button:hover { background: rgb(61, 106, 255); color: #fff; box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815); -webkit-transition: all 0.2s ease-out; -moz-transition: all 0.2s ease-out; transition: all 0.2s ease-out; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out, visibility 0.5s; opacity: 1; visibility: visible; }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+        .switch { font-size: 13px; position: relative; display: inline-block; width: 4em; height: 2.2em; border-radius: 30px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a2a; transition: 0.4s; border-radius: 30px; overflow: hidden; }
+        .slider:before { position: absolute; content: ""; height: 1.2em; width: 1.2em; border-radius: 20px; left: 0.5em; bottom: 0.5em; transition: 0.4s; transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5); box-shadow: inset 8px -4px 0px 0px #fff; }
+        .switch input:checked + .slider { background-color: #00a6ff; }
+        .switch input:checked + .slider:before { transform: translateX(1.8em); box-shadow: inset 15px -4px 0px 15px #ffcf48; }
+        .star { background-color: #fff; border-radius: 50%; position: absolute; width: 5px; transition: all 0.4s; height: 5px; }
+        .star_1 { left: 2.5em; top: 0.5em; }
+        .star_2 { left: 2.2em; top: 1.2em; }
+        .star_3 { left: 3em; top: 0.9em; }
+        .switch input:checked ~ .slider .star { opacity: 0; }
+        .cloud { width: 3.5em; position: absolute; bottom: -1.4em; left: -1.1em; opacity: 0; transition: all 0.4s; }
+        .switch input:checked ~ .slider .cloud { opacity: 1; }
+    </style>
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
+
+    <div id="app-container" style="visibility: hidden; opacity: 0; transition: opacity 0.5s ease-in;">
+        <header class="flex justify-between items-center px-8 py-4 shadow-sm bg-white dark:bg-gray-800 fixed top-0 left-0 right-0 z-50">
+            <div class="flex items-center space-x-2">
+                <img src="logo.png" alt="Healthcare Eclipse Logo" class="w-10 h-10 rounded-full">
+                <h1 class="text-xl font-bold">Healthcare Eclipse</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <label class="switch"><input checked="true" id="checkbox" type="checkbox" /><span class="slider">...</span></label>
+            </div>
+        </header>
+
+        <main class="flex items-center justify-center min-h-screen pt-20">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-sm animate-fade-in">
+                <h3 class="text-3xl font-bold mb-6 text-center text-blue-600 dark:text-blue-400">Login</h3>
+                <form id="login-form" class="space-y-6">
+                    <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                        <input type="email" name="email" id="email" placeholder="you@example.com" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+                        <input type="password" name="password" id="password" placeholder="••••••••" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">Login</button>
+                    <p class="text-sm text-center text-gray-600 dark:text-gray-400">Don't have an account? <a href="registration.html" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400 font-medium">Register</a></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

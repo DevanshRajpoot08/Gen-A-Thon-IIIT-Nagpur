@@ -6,476 +6,62 @@
     <title>Healthcare Eclipse</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
+        tailwind.config = { darkMode: 'class', }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Styles for animated underline on nav links */
-        .nav-link-underline {
-            position: relative;
-        }
-        .nav-link-underline::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -3px;
-            left: 0;
-            background-color: #2563eb;
-            transition: width 0.3s ease-in-out;
-        }
-        .nav-link-underline:hover::after {
-            width: 100%;
-        }
-
-        /* Fade-in animation for modal */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        /* Styles for social media icons */
-        .wrapper {
-            display: inline-flex;
-            list-style: none;
-            padding: 0;
-        }
-
-        .wrapper .icon {
-            position: relative;
-            background: #ffffff;
-            border-radius: 50%;
-            padding: 15px;
-            margin: 10px;
-            width: 50px;
-            height: 50px;
-            font-size: 18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .wrapper .tooltip {
-            position: absolute;
-            top: 0;
-            font-size: 14px;
-            background: #ffffff;
-            color: #ffffff;
-            padding: 5px 8px;
-            border-radius: 5px;
-            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .wrapper .icon:hover .tooltip {
-            top: -45px;
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        .wrapper .icon:hover span,
-        .wrapper .icon:hover .tooltip {
-            text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-        }
-
-        .wrapper .facebook:hover,
-        .wrapper .facebook:hover .tooltip,
-        .wrapper .facebook:hover .tooltip::before {
-            background: #1877F2;
-            color: #ffffff;
-        }
-
-        .wrapper .twitter:hover,
-        .wrapper .twitter:hover .tooltip,
-        .wrapper .twitter:hover .tooltip::before {
-            background: #1DA1F2;
-            color: #ffffff;
-        }
-
-        .wrapper .instagram:hover,
-        .wrapper .instagram:hover .tooltip,
-        .wrapper .instagram:hover .tooltip::before {
-            background: #E4405F;
-            color: #ffffff;
-        }
-        .wrapper .icon svg {
-             width: 24px;
-             height: 24px;
-             fill: #333;
-             transition: all 0.2s;
-        }
-        .wrapper .icon:hover svg {
-            fill: #fff;
-        }
-        
-        /* From Uiverse.io by JustCode14 */
-        /* Theme Switch */
-        /* The switch - the box around the slider */
-        .switch {
-          font-size: 13px; /* Made the switch even smaller */
-          position: relative;
-          display: inline-block;
-          width: 4em;
-          height: 2.2em;
-          border-radius: 30px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-
-        /* The slider */
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: #2a2a2a;
-          transition: 0.4s;
-          border-radius: 30px;
-          overflow: hidden;
-        }
-
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 1.2em;
-          width: 1.2em;
-          border-radius: 20px;
-          left: 0.5em;
-          bottom: 0.5em;
-          transition: 0.4s;
-          transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
-          box-shadow: inset 8px -4px 0px 0px #fff;
-        }
-
-        .switch input:checked + .slider {
-          background-color: #00a6ff;
-        }
-
-        .switch input:checked + .slider:before {
-          transform: translateX(1.8em);
-          box-shadow: inset 15px -4px 0px 15px #ffcf48;
-        }
-
-        .star {
-          background-color: #fff;
-          border-radius: 50%;
-          position: absolute;
-          width: 5px;
-          transition: all 0.4s;
-          height: 5px;
-        }
-
-        .star_1 {
-          left: 2.5em;
-          top: 0.5em;
-        }
-
-        .star_2 {
-          left: 2.2em;
-          top: 1.2em;
-        }
-
-        .star_3 {
-          left: 3em;
-          top: 0.9em;
-        }
-
-        .switch input:checked ~ .slider .star {
-          opacity: 0;
-        }
-
-        .cloud {
-          width: 3.5em;
-          position: absolute;
-          bottom: -1.4em;
-          left: -1.1em;
-          opacity: 0;
-          transition: all 0.4s;
-        }
-
-        .switch input:checked ~ .slider .cloud {
-          opacity: 1;
-        }
-        
-        /* From Uiverse.io by kennyotsu - Text animation */
-        .loader-container {
-            --bg-color: transparent; /* Makes the gradient fade effect invisible on the image background */
-            display: flex;
-            justify-content: center;
-            padding: 1rem 0;
-        }
-
-        .loader {
-          color: #FFF; /* Changed to white to match hero text */
-          font-weight: 500;
-          font-size: 25px;
-          -webkit-box-sizing: content-box;
-          box-sizing: content-box;
-          height: 40px;
-          padding: 10px 10px;
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          border-radius: 8px;
-        }
-
-        .words {
-          overflow: hidden;
-          position: relative;
-        }
-
-        .words::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            var(--bg-color) 10%,
-            transparent 30%,
-            transparent 70%,
-            var(--bg-color) 90%
-          );
-          z-index: 20;
-        }
-
-        .word {
-          display: block;
-          height: 100%;
-          padding-left: 6px;
-          color: #956afa;
-          animation: spin_4991 4s infinite;
-        }
-
-        @keyframes spin_4991 {
-          10% {
-            -webkit-transform: translateY(-102%);
-            transform: translateY(-102%);
-          }
-          25% {
-            -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
-          }
-          35% {
-            -webkit-transform: translateY(-202%);
-            transform: translateY(-202%);
-          }
-          50% {
-            -webkit-transform: translateY(-200%);
-            transform: translateY(-200%);
-          }
-          60% {
-            -webkit-transform: translateY(-302%);
-            transform: translateY(-302%);
-          }
-          75% {
-            -webkit-transform: translateY(-300%);
-            transform: translateY(-300%);
-          }
-          85% {
-            -webkit-transform: translateY(-402%);
-            transform: translateY(-402%);
-          }
-          100% {
-            -webkit-transform: translateY(-400%);
-            transform: translateY(-400%);
-          }
-        }
-
-        /* From Uiverse.io by mrhyddenn */
-        .glowing-button {
-          position: relative;
-          padding: 10px 20px;
-          border-radius: 7px;
-          border: 1px solid rgb(61, 106, 255);
-          font-size: 14px;
-          text-transform: uppercase;
-          font-weight: 600;
-          letter-spacing: 2px;
-          background: transparent;
-          color: rgb(61, 106, 255);
-          overflow: hidden;
-          box-shadow: 0 0 0 0 transparent;
-          -webkit-transition: all 0.2s ease-in;
-          -moz-transition: all 0.2s ease-in;
-          transition: all 0.2s ease-in;
-        }
-        
-        .dark .glowing-button {
-            color: #fff;
-        }
-
-        .glowing-button:hover {
-          background: rgb(61, 106, 255);
-          color: #fff;
-          box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
-          -webkit-transition: all 0.2s ease-out;
-          -moz-transition: all 0.2s ease-out;
-          transition: all 0.2s ease-out;
-        }
-
-        .glowing-button:hover::before {
-          -webkit-animation: sh02 0.5s 0s linear;
-          -moz-animation: sh02 0.5s 0s linear;
-          animation: sh02 0.5s 0s linear;
-        }
-
-        .glowing-button::before {
-          content: '';
-          display: block;
-          width: 0px;
-          height: 86%;
-          position: absolute;
-          top: 7%;
-          left: 0%;
-          opacity: 0;
-          background: #fff;
-          box-shadow: 0 0 50px 30px #fff;
-          -webkit-transform: skewX(-20deg);
-          -moz-transform: skewX(-20deg);
-          -ms-transform: skewX(-20deg);
-          -o-transform: skewX(-20deg);
-          transform: skewX(-20deg);
-        }
-
-        @keyframes sh02 {
-          from {
-            opacity: 0;
-            left: 0%;
-          }
-
-          50% {
-            opacity: 1;
-          }
-
-          to {
-            opacity: 0;
-            left: 100%;
-          }
-        }
-
-        .glowing-button:active {
-          box-shadow: 0 0 0 0 transparent;
-          -webkit-transition: box-shadow 0.2s ease-in;
-          -moz-transition: box-shadow 0.2s ease-in;
-          transition: box-shadow 0.2s ease-in;
-        }
-        
-        /* Loading animation styles */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #111;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
-            opacity: 1;
-            visibility: visible;
-        }
-        .loading-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loading svg polyline {
-          fill: none;
-          stroke-width: 3;
-          stroke-linecap: round;
-          stroke-linejoin: round;
-        }
-
-        .loading svg polyline#back {
-          fill: none;
-          stroke: #4dcdf533;
-        }
-
-        .loading svg polyline#front {
-          fill: none;
-          stroke: #74b7f2;
-          stroke-dasharray: 48, 144;
-          stroke-dashoffset: 192;
-          animation: dash_682 1.4s linear infinite;
-        }
-
-        @keyframes dash_682 {
-          72.5% {
-            opacity: 0;
-          }
-          to {
-            stroke-dashoffset: 0;
-          }
-        }
-        
-        /* Shiny Text Effect */
-        .shiny-text {
-          color: #ccc; /* A light grey base color */
-          background: linear-gradient(
-            120deg,
-            #ccc 40%,
-            #fff 50%,
-            #ccc 60%
-          );
-          background-size: 200% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent; /* This is the key */
-          display: inline-block;
-          animation: shine 5s linear infinite;
-        }
-
-        @keyframes shine {
-          0% {
-            background-position: 100%;
-          }
-          100% {
-            background-position: -100%;
-          }
-        }
-
-        /* Scroll-reveal animation for service cards */
-        .service-card {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .service-card.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Style for required form fields */
-        .required-field::after {
-            content: '*';
-            color: red;
-            margin-left: 2px;
-        }
-
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link-underline { position: relative; }
+        .nav-link-underline::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -3px; left: 0; background-color: #2563eb; transition: width 0.3s ease-in-out; }
+        .nav-link-underline:hover::after { width: 100%; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .wrapper { display: inline-flex; list-style: none; padding: 0; }
+        .wrapper .icon { position: relative; background: #ffffff; border-radius: 50%; padding: 15px; margin: 10px; width: 50px; height: 50px; font-size: 18px; display: flex; justify-content: center; align-items: center; flex-direction: column; box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .wrapper .tooltip { position: absolute; top: 0; font-size: 14px; background: #ffffff; color: #ffffff; padding: 5px 8px; border-radius: 5px; box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1); opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .wrapper .icon:hover .tooltip { top: -45px; opacity: 1; visibility: visible; pointer-events: auto; }
+        .wrapper .icon:hover span, .wrapper .icon:hover .tooltip { text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1); }
+        .wrapper .facebook:hover, .wrapper .facebook:hover .tooltip, .wrapper .facebook:hover .tooltip::before { background: #1877F2; color: #ffffff; }
+        .wrapper .twitter:hover, .wrapper .twitter:hover .tooltip, .wrapper .twitter:hover .tooltip::before { background: #1DA1F2; color: #ffffff; }
+        .wrapper .instagram:hover, .wrapper .instagram:hover .tooltip, .wrapper .instagram:hover .tooltip::before { background: #E4405F; color: #ffffff; }
+        .wrapper .icon svg { width: 24px; height: 24px; fill: #333; transition: all 0.2s; }
+        .wrapper .icon:hover svg { fill: #fff; }
+        .switch { font-size: 13px; position: relative; display: inline-block; width: 4em; height: 2.2em; border-radius: 30px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a2a; transition: 0.4s; border-radius: 30px; overflow: hidden; }
+        .slider:before { position: absolute; content: ""; height: 1.2em; width: 1.2em; border-radius: 20px; left: 0.5em; bottom: 0.5em; transition: 0.4s; transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5); box-shadow: inset 8px -4px 0px 0px #fff; }
+        .switch input:checked + .slider { background-color: #00a6ff; }
+        .switch input:checked + .slider:before { transform: translateX(1.8em); box-shadow: inset 15px -4px 0px 15px #ffcf48; }
+        .star { background-color: #fff; border-radius: 50%; position: absolute; width: 5px; transition: all 0.4s; height: 5px; }
+        .star_1 { left: 2.5em; top: 0.5em; }
+        .star_2 { left: 2.2em; top: 1.2em; }
+        .star_3 { left: 3em; top: 0.9em; }
+        .switch input:checked ~ .slider .star { opacity: 0; }
+        .cloud { width: 3.5em; position: absolute; bottom: -1.4em; left: -1.1em; opacity: 0; transition: all 0.4s; }
+        .switch input:checked ~ .slider .cloud { opacity: 1; }
+        .loader-container { --bg-color: transparent; display: flex; justify-content: center; padding: 1rem 0; }
+        .loader { color: #FFF; font-weight: 500; font-size: 25px; -webkit-box-sizing: content-box; box-sizing: content-box; height: 40px; padding: 10px 10px; display: -webkit-box; display: -ms-flexbox; display: flex; border-radius: 8px; }
+        .words { overflow: hidden; position: relative; }
+        .words::after { content: ""; position: absolute; inset: 0; background: linear-gradient( var(--bg-color) 10%, transparent 30%, transparent 70%, var(--bg-color) 90% ); z-index: 20; }
+        .word { display: block; height: 100%; padding-left: 6px; color: #956afa; animation: spin_4991 4s infinite; }
+        @keyframes spin_4991 { 10% { -webkit-transform: translateY(-102%); transform: translateY(-102%); } 25% { -webkit-transform: translateY(-100%); transform: translateY(-100%); } 35% { -webkit-transform: translateY(-202%); transform: translateY(-202%); } 50% { -webkit-transform: translateY(-200%); transform: translateY(-200%); } 60% { -webkit-transform: translateY(-302%); transform: translateY(-302%); } 75% { -webkit-transform: translateY(-300%); transform: translateY(-300%); } 85% { -webkit-transform: translateY(-402%); transform: translateY(-402%); } 100% { -webkit-transform: translateY(-400%); transform: translateY(-400%); } }
+        .glowing-button { position: relative; padding: 10px 20px; border-radius: 7px; border: 1px solid rgb(61, 106, 255); font-size: 14px; text-transform: uppercase; font-weight: 600; letter-spacing: 2px; background: transparent; color: rgb(61, 106, 255); overflow: hidden; box-shadow: 0 0 0 0 transparent; -webkit-transition: all 0.2s ease-in; -moz-transition: all 0.2s ease-in; transition: all 0.2s ease-in; }
+        .dark .glowing-button { color: #fff; }
+        .glowing-button:hover { background: rgb(61, 106, 255); color: #fff; box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815); -webkit-transition: all 0.2s ease-out; -moz-transition: all 0.2s ease-out; transition: all 0.2s ease-out; }
+        .glowing-button:hover::before { -webkit-animation: sh02 0.5s 0s linear; -moz-animation: sh02 0.5s 0s linear; animation: sh02 0.5s 0s linear; }
+        .glowing-button::before { content: ''; display: block; width: 0px; height: 86%; position: absolute; top: 7%; left: 0%; opacity: 0; background: #fff; box-shadow: 0 0 50px 30px #fff; -webkit-transform: skewX(-20deg); -moz-transform: skewX(-20deg); -ms-transform: skewX(-20deg); -o-transform: skewX(-20deg); transform: skewX(-20deg); }
+        @keyframes sh02 { from { opacity: 0; left: 0%; } 50% { opacity: 1; } to { opacity: 0; left: 100%; } }
+        .glowing-button:active { box-shadow: 0 0 0 0 transparent; -webkit-transition: box-shadow 0.2s ease-in; -moz-transition: box-shadow 0.2s ease-in; transition: box-shadow 0.2s ease-in; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out, visibility 0.5s; opacity: 1; visibility: visible; }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+        .loading svg polyline { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+        .loading svg polyline#back { fill: none; stroke: #4dcdf533; }
+        .loading svg polyline#front { fill: none; stroke: #74b7f2; stroke-dasharray: 48, 144; stroke-dashoffset: 192; animation: dash_682 1.4s linear infinite; }
+        @keyframes dash_682 { 72.5% { opacity: 0; } to { stroke-dashoffset: 0; } }
+        .shiny-text { color: #ccc; background: linear-gradient( 120deg, #ccc 40%, #fff 50%, #ccc 60% ); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; animation: shine 5s linear infinite; }
+        @keyframes shine { 0% { background-position: 100%; } 100% { background-position: -100%; } }
+        .service-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .service-card.is-visible { opacity: 1; transform: translateY(0); }
     </style>
     <link rel="icon" type="image/png" href="logo.png">
 </head>
@@ -497,7 +83,7 @@
                 <h1 class="text-xl font-bold">Healthcare Eclipse</h1>
             </div>
             <nav class="hidden md:flex space-x-8 text-sm font-medium">
-                <a href="About.html" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">About</a>
+                <a href="frontpage.html" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Home</a>
                 <a href="#services" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Services</a>
                 <a href="features.html" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Features</a>
                 <a href="#contact" class="hover:text-blue-600 nav-link-underline dark:hover:text-blue-400">Contact</a>
@@ -506,24 +92,16 @@
                 <label class="switch">
                   <input checked="true" id="checkbox" type="checkbox" />
                   <span class="slider">
-                    <div class="star star_1"></div>
-                    <div class="star star_2"></div>
-                    <div class="star star_3"></div>
+                    <div class="star star_1"></div><div class="star star_2"></div><div class="star star_3"></div>
                     <svg viewBox="0 0 16 16" class="cloud_1 cloud">
-                      <path
-                        transform="matrix(.77976 0 0 .78395-299.99-418.63)"
-                        fill="#fff"
-                        d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
-                      ></path>
+                      <path transform="matrix(.77976 0 0 .78395-299.99-418.63)" fill="#fff" d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"></path>
                     </svg>
                   </span>
                 </label>
                 <div id="auth-container">
                     <div class="space-x-3 flex items-center" id="auth-buttons">
-                        <button id="login-btn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700">Login</button>
-                        <button id="register-btn" class="glowing-button">
-                          Register
-                        </button>
+                        <a href="login.html" id="login-btn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700">Login</a>
+                        <a href="registration.html" id="register-btn" class="glowing-button">Register</a>
                     </div>
                      <div id="user-info" class="hidden items-center space-x-4">
                         <span id="welcome-message" class="font-medium text-blue-600 dark:text-blue-400"></span>
@@ -534,745 +112,69 @@
         </header>
 
         <main id="main-content">
-             </main>
-
-        <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-sm relative animate-fade-in">
-                 </div>
-        </div>
-    </div>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loader = document.getElementById('loader');
-            const appContainer = document.getElementById('app-container');
-            
-            // --- LOADER LOGIC ---
-            setTimeout(() => {
-                loader.classList.add('hidden');
-                appContainer.style.visibility = 'visible';
-                appContainer.style.opacity = '1';
-                initializeApp();
-            }, 1400); 
-
-            function initializeApp() {
-                // All the application logic goes here
-                const mainContent = document.getElementById('main-content');
-                const authContainer = document.getElementById('auth-container');
-                const authButtons = document.getElementById('auth-buttons');
-                const userInfo = document.getElementById('user-info');
-                const welcomeMessage = document.getElementById('welcome-message');
-                const logoutBtn = document.getElementById('logout-btn');
-                
-                const loginBtn = document.getElementById('login-btn');
-                const registerBtn = document.getElementById('register-btn');
-                const modalBackdrop = document.getElementById('modal-backdrop');
-                const modalContent = document.getElementById('modal-content');
-                const themeToggle = document.getElementById('checkbox');
-                
-                let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-                
-                // --- MOCK DATA ---
-                const mockDoctors = [
-                    { id: 1, firstName: 'Aisha', lastName: 'Khan', specialty: 'Cardiology', email: 'aisha.khan@eclipse.com' },
-                    { id: 2, firstName: 'Rajesh', lastName: 'Sharma', specialty: 'General Practice', email: 'rajesh.sharma@eclipse.com' },
-                    { id: 3, firstName: 'Priya', lastName: 'Verma', specialty: 'Diabetology', email: 'priya.verma@eclipse.com' },
-                ];
-                
-                // Appointment Requests storage (simplified for mock data)
-                // Stores { patientEmail: string, doctorEmail: string, status: string }
-                let appointmentRequests = JSON.parse(localStorage.getItem('appointmentRequests')) || [];
-                
-                function saveAppointmentRequests() {
-                    localStorage.setItem('appointmentRequests', JSON.stringify(appointmentRequests));
-                }
-
-                // Templates for different views
-                const landingPageTemplate = `
-                    <div id="landing-page-content">
-                        <section class="relative bg-black h-[70vh] flex flex-col items-center justify-center text-center mt-20">
-                            <div class="bg-black bg-opacity-50 absolute inset-0"></div>
-                            <div class="relative z-10 text-white max-w-2xl px-4">
-                                <h2 class="text-4xl md:text-5xl font-bold mb-4 shiny-text">Connecting Patients and Doctors Seamlessly</h2>
-                                <p class="text-lg mb-6 opacity-90">
-                                    Healthcare Eclipse is your all-in-one platform for managing healthcare needs. Book appointments,
-                                    consult with doctors online, and access emergency services with ease.
-                                </p>
-                                 <div class="loader-container my-4">
-                                    <div class="loader">
-                                      <p>Connecting</p>
-                                      <div class="words">
-                                        <span class="word">patients</span>
-                                        <span class="word">doctors</span>
-                                        <span class="word">hospitals</span>
-                                        <span class="word">clinics</span>
-                                        <span class="word">patients</span>
-                                      </div>
-                                    </div>
-                                </div>
+            <div id="landing-page-content">
+                <section class="relative bg-black h-[70vh] flex flex-col items-center justify-center text-center mt-20">
+                    <div class="bg-black bg-opacity-50 absolute inset-0"></div>
+                    <div class="relative z-10 text-white max-w-2xl px-4">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4 shiny-text">Connecting Patients and Doctors Seamlessly</h2>
+                        <p class="text-lg mb-6 opacity-90">
+                            Healthcare Eclipse is your all-in-one platform for managing healthcare needs. Book appointments,
+                            consult with doctors online, and access emergency services with ease.
+                        </p>
+                         <div class="loader-container my-4">
+                            <div class="loader">
+                              <p>Connecting</p>
+                              <div class="words">
+                                <span class="word">patients</span>
+                                <span class="word">doctors</span>
+                                <span class="word">hospitals</span>
+                                <span class="word">clinics</span>
+                                <span class="word">patients</span>
+                              </div>
                             </div>
-                        </section>
-
-                        <section id="services" class="py-16 bg-gray-50 dark:bg-gray-900">
-                             <div class="max-w-6xl mx-auto text-center px-4">
-                                <h3 class="text-3xl font-semibold mb-4">Our Services</h3>
-                                <p class="text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
-                                    Healthcare Eclipse offers a range of services to meet all your healthcare needs, powered by cutting-edge technology to ensure your well-being.
-                                </p>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">📅</div><h4 class="font-semibold text-lg mb-2">Appointment Booking</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Schedule appointments effortlessly with trusted healthcare professionals.</p></div>
-                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">💬</div><h4 class="font-semibold text-lg mb-2">Online Consultations</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Connect virtually with doctors for instant medical advice and follow-ups.</p></div>
-                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">⚕️</div><h4 class="font-semibold text-lg mb-2">Emergency Services</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Access 24/7 emergency services and locate nearby hospitals in seconds.</p></div>
-                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">📊</div><h4 class="font-semibold text-lg mb-2">Health Analytics</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Track trends in your vitals and get AI-based predictions for silent diseases.</p></div>
-                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">🧠</div><h4 class="font-semibold text-lg mb-2">AI Health Detective</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Detect early symptoms of diabetes, thyroid, or hypertension with AI insights.</p></div>
-                                    <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">👨‍⚕️</div><h4 class="font-semibold text-lg mb-2">Doctor Dashboard</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Enable doctors to visualize patterns, risks, and patient history instantly.</p></div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <footer id="contact" class="py-16 bg-gray-900 dark:bg-black text-gray-300">
-                             <div class="max-w-6xl mx-auto px-4">
-                                <h4 class="text-2xl font-semibold mb-8 text-center text-white">Leadership Team</h4>
-                                <div class="grid grid-cols-2 md:grid-cols-4 justify-center items-center gap-8 mb-12">
-                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Devansh Rajpoot</h5><p class="text-gray-400 text-sm">CEO & Founder</p></div>
-                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Piyush Dekate</h5><p class="text-gray-400 text-sm">Chief Technology Officer</p></div>
-                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Nupur Mehar</h5><p class="text-gray-400 text-sm">Head of Operations</p></div>
-                                    <div class="p-4 text-center"><h5 class="font-semibold text-white">Pragati Shelke</h5><p class="text-gray-400 text-sm">Chief Medical Advisor</p></div>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left mt-8 border-t border-gray-700 pt-8">
-                                    <div><h5 class="text-white font-semibold mb-3">Quick Links</h5><ul class="space-y-2 text-gray-400 text-sm"><li><a href="#about" class="hover:text-white transition">About Us</a></li><li><a href="#services" class="hover:text-white transition">Our Services</a></li><li><a href="#" class="hover:text-white transition">Careers</a></li></ul></div>
-                                    <div><h5 class="text-white font-semibold mb-3">Contact Info</h5><p class="text-gray-400 text-sm">📍SIT,Nagpur,Maharastra India</p><a href="mailto:devanshrajpoot2008@gmail.com"><p class="text-gray-400 text-sm">📧 devanshrajpoot2008@gmail.com</p></a><p class="text-gray-400 text-sm">📞 +91 90266 05300</p></div>
-                                    <div class="flex flex-col items-center md:items-start"><h5 class="text-white font-semibold mb-3">Follow Us</h5><ul class="wrapper"><li class="icon facebook"><span class="tooltip">Facebook</span><svg viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></li><li class="icon twitter"><span class="tooltip">Twitter</span><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"></path></svg></li><li class="icon instagram"><span class="tooltip">Instagram</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path></svg></li></ul></div>
-                                </div>
-                                <p class="text-gray-500 text-sm mt-10 text-center">© 2025 Healthcare Eclipse. All rights reserved.</p>
-                            </div>
-                        </footer>
+                        </div>
                     </div>
-                `;
-                
-                function getPatientDashboardTemplate(user) {
-                    const healthRecord = user.healthRecord || null;
-                    const resultsHtml = healthRecord ? generateHealthResultsHtml(healthRecord) : `
-                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg mb-8" role="alert">
-                            <p class="font-bold">Action Required</p>
-                            <p>Please submit your health records below to access personalized warnings, doctor recommendations, and medicine suggestions.</p>
+                </section>
+
+                <section id="services" class="py-16 bg-gray-50 dark:bg-gray-900">
+                     <div class="max-w-6xl mx-auto text-center px-4">
+                        <h3 class="text-3xl font-semibold mb-4">Our Services</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+                            Healthcare Eclipse offers a range of services to meet all your healthcare needs, powered by cutting-edge technology to ensure your well-being.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">📅</div><h4 class="font-semibold text-lg mb-2">Appointment Booking</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Schedule appointments effortlessly with trusted healthcare professionals.</p></div>
+                            <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">💬</div><h4 class="font-semibold text-lg mb-2">Online Consultations</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Connect virtually with doctors for instant medical advice and follow-ups.</p></div>
+                            <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">⚕️</div><h4 class="font-semibold text-lg mb-2">Emergency Services</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Access 24/7 emergency services and locate nearby hospitals in seconds.</p></div>
+                            <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">📊</div><h4 class="font-semibold text-lg mb-2">Health Analytics</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Track trends in your vitals and get AI-based predictions for silent diseases.</p></div>
+                            <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">🧠</div><h4 class="font-semibold text-lg mb-2">AI Health Detective</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Detect early symptoms of diabetes, thyroid, or hypertension with AI insights.</p></div>
+                            <div class="service-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"><div class="text-blue-600 text-4xl mb-3">👨‍⚕️</div><h4 class="font-semibold text-lg mb-2">Doctor Dashboard</h4><p class="text-gray-500 dark:text-gray-400 text-sm">Enable doctors to visualize patterns, risks, and patient history instantly.</p></div>
                         </div>
-                        <form id="health-record-form" class="space-y-6">
-                            <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Input Your Health Records</h3>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Weight (kg)</label>
-                                    <input type="number" step="0.1" name="weight" placeholder="e.g. 70.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Height (cm)</label>
-                                    <input type="number" name="height" placeholder="e.g. 175" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Gender</label>
-                                    <select name="gender" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required>
-                                        <option value="">Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">BP Systolic (mmHg)</label>
-                                    <input type="number" name="bpSystolic" placeholder="e.g. 120" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">BP Diastolic (mmHg)</label>
-                                    <input type="number" name="bpDiastolic" placeholder="e.g. 80" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Heart Rate (bpm)</label>
-                                    <input type="number" name="heartRate" placeholder="e.g. 75" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Blood Sugar (mg/dL)</label>
-                                    <input type="number" name="bloodSugar" placeholder="e.g. 95" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
+                    </div>
+                </section>
 
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Sleep Duration (hours)</label>
-                                    <input type="number" step="0.5" name="sleepDuration" placeholder="e.g. 7.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Exercise (minutes/day)</label>
-                                    <input type="number" name="exerciseMinutes" placeholder="e.g. 30" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Water Intake (litres)</label>
-                                    <input type="number" step="0.1" name="waterIntake" placeholder="e.g. 2.5" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block mb-2 font-medium required-field">Stress Level (1-10)</label>
-                                    <input type="range" name="stressLevel" min="1" max="10" value="5" oninput="this.nextElementSibling.value=this.value" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" required />
-                                    <output>5</output>
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="block mb-2 font-medium required-field">Alcohol/Smoking</label>
-                                    <select name="alcoholSmoking" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" required>
-                                        <option value="none">None</option>
-                                        <option value="social_alcohol">Social Alcohol</option>
-                                        <option value="regular_alcohol">Regular Alcohol</option>
-                                        <option value="smoker">Smoker</option>
-                                        <option value="both">Both</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="col-span-full">
-                                <label class="block mb-2 font-medium">Current Symptoms (comma separated)</label>
-                                <input type="text" name="symptoms" placeholder="e.g. headache, fatigue, mild fever" class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="col-span-full">
-                                <label class="block mb-2 font-medium">Additional Notes</label>
-                                <textarea name="additionalNotes" rows="3" placeholder="Any other relevant information..." class="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:border-gray-600"></textarea>
-                            </div>
-                            
-                            <button type="submit" class="glowing-button w-full">Submit Health Record</button>
-                        </form>
-                    `;
-                    
-                    return `
-                        <div id="patient-dashboard" class="p-8 pt-28 max-w-6xl mx-auto">
-                            <h2 class="text-3xl font-bold mb-4">Patient Dashboard</h2>
-                            <p class="mb-8 text-lg">Welcome back, <span class="font-semibold">${user.firstName} ${user.lastName}</span>!</p>
-                            
-                            ${resultsHtml}
-                            
-                            <div class="grid md:grid-cols-2 gap-8 mt-8">
-                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Your Information</h3>
-                                    <p><strong>Email:</strong> ${user.email}</p>
-                                    <p><strong>Date of Birth:</strong> ${user.dob}</p>
-                                </div>
-                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Upcoming Appointments</h3>
-                                    ${getPatientAppointmentsHtml(user.email)}
-                                </div>
-                                <div id="current-health-record" class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Your Latest Health Record</h3>
-                                    ${healthRecord ? formatHealthRecord(healthRecord) : '<p class="text-gray-500 dark:text-gray-400">No health records submitted yet.</p>'}
-                                    ${healthRecord ? '<button id="update-health-record-btn" class="mt-4 px-4 py-2 border border-blue-500 text-blue-500 rounded-md text-sm font-medium hover:bg-blue-500 hover:text-white dark:border-blue-400 dark:hover:bg-blue-600">Update Record</button>' : ''}
-                                </div>
-                            </div>
+                <footer id="contact" class="py-16 bg-gray-900 dark:bg-black text-gray-300">
+                     <div class="max-w-6xl mx-auto px-4">
+                        <h4 class="text-2xl font-semibold mb-8 text-center text-white">Leadership Team</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 justify-center items-center gap-8 mb-12">
+                            <div class="p-4 text-center"><h5 class="font-semibold text-white">Devansh Rajpoot</h5><p class="text-gray-400 text-sm">CEO & Founder</p></div>
+                            <div class="p-4 text-center"><h5 class="font-semibold text-white">Piyush Dekate</h5><p class="text-gray-400 text-sm">Chief Technology Officer</p></div>
+                            <div class="p-4 text-center"><h5 class="font-semibold text-white">Nupur Mehar</h5><p class="text-gray-400 text-sm">Head of Operations</p></div>
+                            <div class="p-4 text-center"><h5 class="font-semibold text-white">Pragati Shelke</h5><p class="text-gray-400 text-sm">Chief Medical Advisor</p></div>
                         </div>
-                    `;
-                }
-
-                function getDoctorDashboardTemplate(user) {
-                    const requestsHtml = getDoctorAppointmentRequestsHtml(user.email);
-                    return `
-                        <div id="doctor-dashboard" class="p-8 pt-28 max-w-6xl mx-auto">
-                            <h2 class="text-3xl font-bold mb-4">Doctor Dashboard</h2>
-                            <p class="mb-8 text-lg">Welcome back, <span class="font-semibold">Dr. ${user.lastName}</span>!</p>
-                             <div class="grid md:grid-cols-2 gap-8">
-                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Your Information</h3>
-                                    <p><strong>Email:</strong> ${user.email}</p>
-                                    <p><strong>Specialty:</strong> ${mockDoctors.find(d => d.email === user.email)?.specialty || 'N/A'}</p>
-                                </div>
-                                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Your Schedule</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">Your schedule is clear for today.</p>
-                                </div>
-                                <div id="appointment-requests" class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                                    <h3 class="text-xl font-semibold mb-4">Appointment Requests</h3>
-                                    ${requestsHtml}
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left mt-8 border-t border-gray-700 pt-8">
+                            <div><h5 class="text-white font-semibold mb-3">Quick Links</h5><ul class="space-y-2 text-gray-400 text-sm"><li><a href="#about" class="hover:text-white transition">About Us</a></li><li><a href="#services" class="hover:text-white transition">Our Services</a></li><li><a href="#" class="hover:text-white transition">Careers</a></li></ul></div>
+                            <div><h5 class="text-white font-semibold mb-3">Contact Info</h5><p class="text-gray-400 text-sm">📍SIT,Nagpur,Maharastra India</p><a href="mailto:devanshrajpoot2008@gmail.com"><p class="text-gray-400 text-sm">📧 devanshrajpoot2008@gmail.com</p></a><p class="text-gray-400 text-sm">📞 +91 90266 05300</p></div>
+                            <div class="flex flex-col items-center md:items-start"><h5 class="text-white font-semibold mb-3">Follow Us</h5><ul class="wrapper"><li class="icon facebook"><span class="tooltip">Facebook</span><svg viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></li><li class="icon twitter"><span class="tooltip">Twitter</span><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"></path></svg></li><li class="icon instagram"><span class="tooltip">Instagram</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path></svg></li></ul></div>
                         </div>
-                    `;
-                }
-                
-                function formatHealthRecord(record) {
-                    return `
-                        <div class="space-y-4">
-                            <div><strong class="text-blue-600 dark:text-blue-400">Vital Signs:</strong></div>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
-                                <p><strong>Weight:</strong> ${record.weight} kg</p>
-                                <p><strong>Height:</strong> ${record.height} cm</p>
-                                <p><strong>Gender:</strong> ${record.gender}</p>
-                                <p><strong>BP (Systolic):</strong> ${record.bpSystolic} mmHg</p>
-                                <p><strong>BP (Diastolic):</strong> ${record.bpDiastolic} mmHg</p>
-                                <p><strong>Heart Rate:</strong> ${record.heartRate} bpm</p>
-                                <p><strong>Blood Sugar:</strong> ${record.bloodSugar} mg/dL</p>
-                            </div>
-                            <div><strong class="text-blue-600 dark:text-blue-400">Lifestyle:</strong></div>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
-                                <p><strong>Sleep:</strong> ${record.sleepDuration} hrs</p>
-                                <p><strong>Exercise:</strong> ${record.exerciseMinutes} mins/day</p>
-                                <p><strong>Water:</strong> ${record.waterIntake} litres</p>
-                                <p><strong>Stress:</strong> ${record.stressLevel}/10</p>
-                                <p class="sm:col-span-3"><strong>Alcohol/Smoking:</strong> ${record.alcoholSmoking.replace('_', ' ')}</p>
-                            </div>
-                            <div><strong class="text-blue-600 dark:text-blue-400">Symptoms & Notes:</strong></div>
-                            <p class="text-sm"><strong>Symptoms:</strong> ${record.symptoms || 'None reported'}</p>
-                            <p class="text-sm"><strong>Notes:</strong> ${record.additionalNotes || 'N/A'}</p>
-                        </div>
-                    `;
-                }
-                
-                function getPatientAppointmentsHtml(patientEmail) {
-                    const requests = appointmentRequests.filter(req => req.patientEmail === patientEmail);
-                    if (requests.length === 0) {
-                        return '<p class="text-gray-500 dark:text-gray-400">You have no pending or confirmed appointments.</p>';
-                    }
-                    
-                    return `<ul class="space-y-3">
-                        ${requests.map(req => {
-                            const doctor = mockDoctors.find(d => d.email === req.doctorEmail);
-                            const doctorName = doctor ? `Dr. ${doctor.lastName} (${doctor.specialty})` : req.doctorEmail;
-                            const statusColor = req.status === 'Pending' ? 'text-yellow-500' : 'text-green-500';
-                            return `<li class="text-sm border-b border-gray-200 dark:border-gray-700 pb-2">
-                                Appointment with <strong>${doctorName}</strong>: <span class="${statusColor}">${req.status}</span>
-                            </li>`;
-                        }).join('')}
-                    </ul>`;
-                }
+                        <p class="text-gray-500 text-sm mt-10 text-center">© 2025 Healthcare Eclipse. All rights reserved.</p>
+                    </div>
+                </footer>
+            </div>
+        </main>
+        
+        </div>
 
-                function getDoctorAppointmentRequestsHtml(doctorEmail) {
-                    const requests = appointmentRequests.filter(req => req.doctorEmail === doctorEmail && req.status === 'Pending');
-                    
-                    if (requests.length === 0) {
-                         return '<p class="text-gray-500 dark:text-gray-400">You have no new appointment requests.</p>';
-                    }
-                    
-                    return `<ul class="space-y-4">
-                        ${requests.map(req => {
-                            const patientUser = (JSON.parse(localStorage.getItem('healthcareUsers')) || []).find(u => u.email === req.patientEmail);
-                            const patientName = patientUser ? `${patientUser.firstName} ${patientUser.lastName}` : req.patientEmail;
-                            const patientRecord = patientUser?.healthRecord ? `(BMI: ${calculateBMI(patientUser.healthRecord.weight, patientUser.healthRecord.height).toFixed(1)}, BP: ${patientUser.healthRecord.bpSystolic}/${patientUser.healthRecord.bpDiastolic})` : '';
-                            
-                            return `<li class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center" data-patient-email="${req.patientEmail}">
-                                <div>
-                                    <p class="font-semibold text-lg">${patientName}</p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Requesting Consultation ${patientRecord}</p>
-                                </div>
-                                <div>
-                                    <button class="accept-btn bg-green-500 hover:bg-green-600 text-white text-sm py-1 px-3 rounded-md mr-2" data-patient="${req.patientEmail}">Accept</button>
-                                    <button class="reject-btn bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-3 rounded-md" data-patient="${req.patientEmail}">Reject</button>
-                                </div>
-                            </li>`;
-                        }).join('')}
-                    </ul>`;
-                }
-                
-                function calculateBMI(weight, height) {
-                    const heightMeters = height / 100;
-                    return weight / (heightMeters * heightMeters);
-                }
-
-                function generateHealthResultsHtml(record) {
-                    const warnings = [];
-                    const medicineSuggestions = [];
-                    let doctorSpecialty = 'General Practice';
-                    
-                    // BMI Calculation and Warning
-                    const bmi = calculateBMI(record.weight, record.height);
-                    if (bmi > 30) {
-                        warnings.push('Severe Obesity: High risk of heart disease and diabetes. Consult a specialist.');
-                        medicineSuggestions.push('Lifestyle modification is the primary treatment. No immediate medication suggested without a doctor’s diagnosis.');
-                        doctorSpecialty = 'Cardiology';
-                    } else if (bmi > 25) {
-                        warnings.push('Overweight: Increased risk of hypertension and high cholesterol.');
-                        medicineSuggestions.push('Focus on diet and exercise. Consider supplements like Omega-3 for heart health (consult doctor).');
-                    }
-                    
-                    // Blood Pressure Warning
-                    if (record.bpSystolic >= 140 || record.bpDiastolic >= 90) {
-                        warnings.push('Hypertension (High Blood Pressure): Your blood pressure is high. This needs immediate medical attention.');
-                        medicineSuggestions.push('Initial suggestion: Lifestyle changes. Possible medications (e.g., ACE inhibitors or Beta-blockers) require a doctor’s prescription.');
-                        doctorSpecialty = 'Cardiology';
-                    } else if (record.bpSystolic >= 120 || record.bpDiastolic >= 80) {
-                        warnings.push('Elevated Blood Pressure: Close monitoring and lifestyle changes are recommended.');
-                    }
-                    
-                    // Blood Sugar Warning
-                    if (record.bloodSugar > 125) {
-                        warnings.push('High Blood Sugar: Your fasting blood sugar is elevated (possible diabetes). A formal lab test is necessary.');
-                        medicineSuggestions.push('Metformin (prescription only) is common for Type 2 Diabetes. Immediately start dietary control and increased physical activity.');
-                        doctorSpecialty = 'Diabetology';
-                    }
-                    
-                    // Lifestyle Warnings
-                    if (record.sleepDuration < 6) {
-                        warnings.push('Chronic Sleep Deprivation: This can severely impact mood, immunity, and concentration.');
-                    }
-                    if (record.stressLevel > 7) {
-                        warnings.push('High Stress Level: High stress can exacerbate other conditions like hypertension.');
-                    }
-                    if (['regular_alcohol', 'smoker', 'both'].includes(record.alcoholSmoking)) {
-                        warnings.push('High-Risk Lifestyle: Alcohol and/or smoking significantly increases cancer and cardiovascular disease risk.');
-                    }
-                    
-                    // Symptom-Based Suggestions
-                    if (record.symptoms && record.symptoms.toLowerCase().includes('headache')) {
-                         medicineSuggestions.push('For general headache relief: OTC Pain relievers like Ibuprofen or Paracetamol (Tylenol).');
-                    }
-                    if (record.symptoms && record.symptoms.toLowerCase().includes('fever')) {
-                         medicineSuggestions.push('For mild fever: Paracetamol (Acetaminophen) for temperature control.');
-                    }
-                    if (record.symptoms && record.symptoms.toLowerCase().includes('fatigue') && record.sleepDuration > 6) {
-                        medicineSuggestions.push('Persistent fatigue (even with sufficient sleep): May require blood tests to check for vitamin deficiencies (e.g., Vitamin D, B12).');
-                        doctorSpecialty = 'General Practice';
-                    }
-                    
-                    const warningHtml = warnings.length > 0 ? 
-                        `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-4">
-                            <p class="font-bold">⚠️ Health Warnings & AI Insights</p>
-                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">${warnings.map(w => `<li>${w}</li>`).join('')}</ul>
-                        </div>` : 
-                        `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-4">
-                            <p class="font-bold">✅ Health Summary</p>
-                            <p class="text-sm mt-2">Your vital signs and lifestyle factors indicate a low immediate risk. Keep up the healthy habits!</p>
-                        </div>`;
-                        
-                    const medicineHtml = medicineSuggestions.length > 0 ?
-                        `<div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg mb-4">
-                            <p class="font-bold">💊 Possible Medicine Suggestions (Consult a Doctor!)</p>
-                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">${medicineSuggestions.map(m => `<li>${m}</li>`).join('')}</ul>
-                        </div>` : '';
-                        
-                    const doctorListHtml = generateDoctorListHtml(doctorSpecialty);
-
-                    return `
-                        <div class="space-y-4">
-                            <h3 class="text-2xl font-semibold text-blue-600 dark:text-blue-400">Health Analysis Results</h3>
-                            ${warningHtml}
-                            ${medicineHtml}
-                            ${doctorListHtml}
-                        </div>
-                    `;
-                }
-                
-                function generateDoctorListHtml(suggestedSpecialty) {
-                    const filteredDoctors = mockDoctors.filter(d => d.specialty === suggestedSpecialty);
-                    const allDoctors = mockDoctors;
-                    const doctors = filteredDoctors.length > 0 ? filteredDoctors : allDoctors;
-                    const suggestionText = filteredDoctors.length > 0 ? `Based on your results, we recommend a **${suggestedSpecialty}** specialist:` : 'General list of available doctors:';
-                    
-                    return `
-                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                            <h4 class="text-xl font-semibold mb-3">🧑‍⚕️ Doctor Recommendations</h4>
-                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">${suggestionText}</p>
-                            <ul class="space-y-3">
-                                ${doctors.map(doctor => {
-                                    const hasPendingRequest = appointmentRequests.some(req => 
-                                        req.patientEmail === currentUser.email && 
-                                        req.doctorEmail === doctor.email &&
-                                        req.status === 'Pending'
-                                    );
-                                    
-                                    const button = hasPendingRequest 
-                                        ? `<span class="text-sm text-yellow-500 font-medium">Request Pending</span>` 
-                                        : `<button class="request-appointment-btn bg-blue-600 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded-md" data-doctor-email="${doctor.email}">Request Appointment</button>`;
-                                        
-                                    return `<li class="flex justify-between items-center p-3 border-b dark:border-gray-700 last:border-b-0">
-                                        <div>
-                                            <p class="font-semibold">Dr. ${doctor.lastName}</p>
-                                            <p class="text-sm text-blue-600 dark:text-blue-400">${doctor.specialty}</p>
-                                        </div>
-                                        ${button}
-                                    </li>`;
-                                }).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
-
-                function showView(user) {
-                    let viewTemplate;
-                    if (!user) {
-                         viewTemplate = landingPageTemplate;
-                    } else if (user.role === 'patient') {
-                        viewTemplate = getPatientDashboardTemplate(user);
-                    } else if (user.role === 'doctor') {
-                        viewTemplate = getDoctorDashboardTemplate(user);
-                    } else {
-                        viewTemplate = landingPageTemplate;
-                    }
-
-                    mainContent.innerHTML = viewTemplate;
-                    
-                    // Re-initialize the scroll observer for the landing page
-                    if(viewTemplate === landingPageTemplate) {
-                        const observer = new IntersectionObserver((entries) => {
-                            entries.forEach((entry, index) => {
-                                if (entry.isIntersecting) {
-                                    setTimeout(() => {
-                                        entry.target.classList.add('is-visible');
-                                    }, index * 150);
-                                    observer.unobserve(entry.target);
-                                }
-                            });
-                        }, { threshold: 0.1 });
-                        const serviceCards = document.querySelectorAll('.service-card');
-                        serviceCards.forEach(card => observer.observe(card));
-                    }
-                }
-
-                function updateHeader() {
-                    if (currentUser) {
-                        authButtons.classList.add('hidden');
-                        userInfo.classList.remove('hidden');
-                        userInfo.classList.add('flex');
-                        welcomeMessage.textContent = `Welcome, ${currentUser.firstName}!`;
-                    } else {
-                        authButtons.classList.remove('hidden');
-                        userInfo.classList.add('hidden');
-                        userInfo.classList.remove('flex');
-                    }
-                }
-                
-                function showModal(type) {
-                    modalBackdrop.classList.remove('hidden');
-                    let formHtml = '';
-                    if (type === 'login') {
-                        formHtml = `
-                            <h3 class="text-xl font-semibold mb-4 text-center">Login</h3>
-                            <form id="login-form" class="space-y-4">
-                                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
-                                <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Login</button>
-                                <p class="text-sm text-center text-gray-600 dark:text-gray-400">Don't have an account? <span id="switch-to-register" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Register</span></p>
-                            </form>
-                            <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-                        `;
-                    } else {
-                        formHtml = `
-                            <h3 class="text-xl font-semibold mb-4 text-center">Register</h3>
-                            <form id="register-form" class="space-y-4">
-                                <p id="register-error" class="text-red-500 text-sm text-center hidden"></p>
-                                <input type="text" name="firstName" placeholder="First Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <input type="text" name="lastName" placeholder="Last Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <input type="date" name="dob" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" required />
-                                <div class="flex items-center justify-center space-x-4"><label>I am a:</label>
-                                    <input type="radio" id="patient" name="role" value="patient" checked><label for="patient">Patient</label>
-                                    <input type="radio" id="doctor" name="role" value="doctor"><label for="doctor">Doctor</label>
-                                </div>
-                                <button type="submit" class="glowing-button w-full">Register</button>
-                                <p class="text-sm text-center text-gray-600 dark:text-gray-400">Already have an account? <span id="switch-to-login" class="text-blue-600 cursor-pointer hover:underline dark:text-blue-400">Login</span></p>
-                            </form>
-                            <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-                        `;
-                    }
-                    modalContent.innerHTML = formHtml;
-                }
-
-                function closeModal() {
-                    modalBackdrop.classList.add('hidden');
-                    modalContent.innerHTML = '';
-                }
-
-                function saveUser(user) {
-                     const users = JSON.parse(localStorage.getItem('healthcareUsers')) || [];
-                     const index = users.findIndex(u => u.email === user.email);
-                     if (index !== -1) {
-                         users[index] = user;
-                     } else {
-                         users.push(user);
-                     }
-                     localStorage.setItem('healthcareUsers', JSON.stringify(users));
-                     localStorage.setItem('currentUser', JSON.stringify(user));
-                     currentUser = user;
-                }
-
-                function handleLogin(e) {
-                    e.preventDefault();
-                    const email = e.target.email.value;
-                    const password = e.target.password.value;
-                    const users = JSON.parse(localStorage.getItem('healthcareUsers')) || [];
-                    const user = users.find(u => u.email === email && u.password === password);
-
-                    if (user) {
-                        localStorage.setItem('currentUser', JSON.stringify(user));
-                        currentUser = user;
-                        updateHeader();
-                        showView(user);
-                        closeModal();
-                    } else {
-                        const errorEl = document.getElementById('login-error');
-                        errorEl.textContent = 'Invalid email or password.';
-                        errorEl.classList.remove('hidden');
-                    }
-                }
-
-                function handleRegister(e) {
-                    e.preventDefault();
-                    const users = JSON.parse(localStorage.getItem('healthcareUsers')) || [];
-                    const email = e.target.email.value;
-                    const errorEl = document.getElementById('register-error');
-
-                    if (users.find(u => u.email === email)) {
-                        errorEl.textContent = 'A user with this email already exists.';
-                        errorEl.classList.remove('hidden');
-                        return;
-                    }
-
-                    const newUser = {
-                        firstName: e.target.firstName.value,
-                        lastName: e.target.lastName.value,
-                        dob: e.target.dob.value,
-                        email: email,
-                        password: e.target.password.value,
-                        role: e.target.role.value,
-                        healthRecord: null // Initialize health record for new patients
-                    };
-                    
-                    saveUser(newUser); // Saves user to list and sets as current user
-                    
-                    closeModal();
-                    alert('Registration successful! Please log in.');
-                    // Switch to login modal without logging in automatically
-                    setTimeout(() => showModal('login'), 100); 
-                }
-                
-                function handleHealthRecordSubmit(e) {
-                    e.preventDefault();
-                    const form = e.target;
-                    
-                    const record = {
-                        weight: parseFloat(form.weight.value),
-                        height: parseInt(form.height.value),
-                        gender: form.gender.value,
-                        bpSystolic: parseInt(form.bpSystolic.value),
-                        bpDiastolic: parseInt(form.bpDiastolic.value),
-                        heartRate: parseInt(form.heartRate.value),
-                        bloodSugar: parseInt(form.bloodSugar.value),
-                        sleepDuration: parseFloat(form.sleepDuration.value),
-                        exerciseMinutes: parseInt(form.exerciseMinutes.value),
-                        waterIntake: parseFloat(form.waterIntake.value),
-                        stressLevel: parseInt(form.stressLevel.value),
-                        alcoholSmoking: form.alcoholSmoking.value,
-                        symptoms: form.symptoms.value.trim(),
-                        additionalNotes: form.additionalNotes.value.trim(),
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    // Update user object and persist
-                    currentUser.healthRecord = record;
-                    saveUser(currentUser);
-                    
-                    // Re-render dashboard
-                    showView(currentUser);
-                    alert('Health record submitted successfully! Review your analysis.');
-                }
-                
-                function handleRequestAppointment(doctorEmail) {
-                    const existingRequest = appointmentRequests.find(req => 
-                        req.patientEmail === currentUser.email && 
-                        req.doctorEmail === doctorEmail &&
-                        req.status === 'Pending'
-                    );
-
-                    if (existingRequest) {
-                        alert('You already have a pending request with this doctor.');
-                        return;
-                    }
-                    
-                    appointmentRequests.push({
-                        patientEmail: currentUser.email,
-                        doctorEmail: doctorEmail,
-                        status: 'Pending',
-                        date: new Date().toLocaleString()
-                    });
-                    saveAppointmentRequests();
-                    showView(currentUser); // Re-render to show "Request Pending"
-                    alert(`Appointment request sent to ${doctorEmail}!`);
-                }
-                
-                function handleDoctorAction(patientEmail, action) {
-                    const requestIndex = appointmentRequests.findIndex(req => 
-                        req.patientEmail === patientEmail && 
-                        req.doctorEmail === currentUser.email &&
-                        req.status === 'Pending'
-                    );
-                    
-                    if (requestIndex !== -1) {
-                        appointmentRequests[requestIndex].status = action === 'accept' ? 'Confirmed' : 'Rejected';
-                        saveAppointmentRequests();
-                        showView(currentUser); // Re-render doctor dashboard
-                        alert(`Appointment request from ${patientEmail} ${action}ed.`);
-                    }
-                }
-                
-                function handleLogout() {
-                    currentUser = null;
-                    localStorage.removeItem('currentUser');
-                    updateHeader();
-                    showView(null);
-                }
-
-                // Initial setup
-                showView(currentUser);
-                updateHeader();
-
-                // Event Listeners
-                loginBtn.addEventListener('click', () => showModal('login'));
-                registerBtn.addEventListener('click', () => showModal('register'));
-                logoutBtn.addEventListener('click', handleLogout);
-                modalBackdrop.addEventListener('click', e => (e.target === modalBackdrop) && closeModal());
-                
-                document.body.addEventListener('click', e => {
-                    if (e.target.id === 'close-modal') closeModal();
-                    if (e.target.id === 'switch-to-register') showModal('register');
-                    if (e.target.id === 'switch-to-login') showModal('login');
-                    
-                    // Patient Dashboard Buttons
-                    if (e.target.id === 'update-health-record-btn') {
-                        // For simplicity, re-render dashboard which will show the blank form again
-                        currentUser.healthRecord = null;
-                        showView(currentUser);
-                    }
-                    if (e.target.classList.contains('request-appointment-btn')) {
-                        handleRequestAppointment(e.target.dataset.doctorEmail);
-                    }
-                    
-                    // Doctor Dashboard Buttons
-                    if (e.target.classList.contains('accept-btn')) {
-                         handleDoctorAction(e.target.dataset.patient, 'accept');
-                    }
-                    if (e.target.classList.contains('reject-btn')) {
-                         handleDoctorAction(e.target.dataset.patient, 'reject');
-                    }
-                });
-                
-                document.body.addEventListener('submit', e => {
-                    if (e.target.id === 'login-form') handleLogin(e);
-                    if (e.target.id === 'register-form') handleRegister(e);
-                    if (e.target.id === 'health-record-form') handleHealthRecordSubmit(e);
-                });
-
-                // Theme Toggle initialization
-                if(themeToggle.checked) document.documentElement.classList.remove('dark');
-                else document.documentElement.classList.add('dark');
-                themeToggle.addEventListener('change', function() {
-                    document.documentElement.classList.toggle('dark', !this.checked);
-                });
-            }
-
-            // --- Simplified Loader Logic ---
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                const appContainer = document.getElementById('app-container');
-
-                loader.classList.add('hidden');
-                appContainer.style.visibility = 'visible';
-                appContainer.style.opacity = '1';
-                
-                initializeApp();
-            }, 1400);
-
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
