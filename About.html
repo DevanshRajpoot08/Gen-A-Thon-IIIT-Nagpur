@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Custom Styled Webpage</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Setting the default font to Inter, as required */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Styles for animated underline on nav links */
+        .nav-link-underline {
+            position: relative;
+        }
+        .nav-link-underline::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -3px;
+            left: 0;
+            background-color: #2563eb;
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link-underline:hover::after {
+            width: 100%;
+        }
+
+        /* Fade-in animation for modal */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        /* Styles for social media icons */
+        .wrapper {
+            display: inline-flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .wrapper .icon {
+            position: relative;
+            background: #ffffff;
+            border-radius: 50%;
+            padding: 15px;
+            margin: 10px;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .wrapper .tooltip {
+            position: absolute;
+            top: 0;
+            font-size: 14px;
+            background: #ffffff;
+            color: #ffffff;
+            padding: 5px 8px;
+            border-radius: 5px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .wrapper .icon:hover .tooltip {
+            top: -45px;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .wrapper .icon:hover span,
+        .wrapper .icon:hover .tooltip {
+            text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .wrapper .facebook:hover,
+        .wrapper .facebook:hover .tooltip,
+        .wrapper .facebook:hover .tooltip::before {
+            background: #1877F2;
+            color: #ffffff;
+        }
+
+        .wrapper .twitter:hover,
+        .wrapper .twitter:hover .tooltip,
+        .wrapper .twitter:hover .tooltip::before {
+            background: #1DA1F2;
+            color: #ffffff;
+        }
+
+        .wrapper .instagram:hover,
+        .wrapper .instagram:hover .tooltip,
+        .wrapper .instagram:hover .tooltip::before {
+            background: #E4405F;
+            color: #ffffff;
+        }
+        .wrapper .icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #333;
+            transition: all 0.2s;
+        }
+        .wrapper .icon:hover svg {
+            fill: #fff;
+        }
+        
+        /* From Uiverse.io by JustCode14 */
+        /* Theme Switch */
+        /* The switch - the box around the slider */
+        .switch {
+            font-size: 13px; /* Made the switch even smaller */
+            position: relative;
+            display: inline-block;
+            width: 4em;
+            height: 2.2em;
+            border-radius: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #2a2a2a;
+            transition: 0.4s;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.2em;
+            width: 1.2em;
+            border-radius: 20px;
+            left: 0.5em;
+            bottom: 0.5em;
+            transition: 0.4s;
+            transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
+            box-shadow: inset 8px -4px 0px 0px #fff;
+        }
+
+        .switch input:checked + .slider {
+            background-color: #00a6ff;
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(1.8em);
+            box-shadow: inset 15px -4px 0px 15px #ffcf48;
+        }
+
+        .star {
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            width: 5px;
+            transition: all 0.4s;
+            height: 5px;
+        }
+
+        .star_1 {
+            left: 2.5em;
+            top: 0.5em;
+        }
+
+        .star_2 {
+            left: 2.2em;
+            top: 1.2em;
+        }
+
+        .star_3 {
+            left: 3em;
+            top: 0.9em;
+        }
+
+        .switch input:checked ~ .slider .star {
+            opacity: 0;
+        }
+
+        .cloud {
+            width: 3.5em;
+            position: absolute;
+            bottom: -1.4em;
+            left: -1.1em;
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .switch input:checked ~ .slider .cloud {
+            opacity: 1;
+        }
+        
+        /* From Uiverse.io by kennyotsu - Text animation */
+        .loader-container {
+            --bg-color: transparent; /* Makes the gradient fade effect invisible on the image background */
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+        }
+
+        .loader {
+            color: #FFF; /* Changed to white to match hero text */
+            font-weight: 500;
+            font-size: 25px;
+            -webkit-box-sizing: content-box;
+            box-sizing: content-box;
+            height: 40px;
+            padding: 10px 10px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            border-radius: 8px;
+        }
+
+        .words {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .words::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                var(--bg-color) 10%,
+                transparent 30%,
+                transparent 70%,
+                var(--bg-color) 90%
+            );
+            z-index: 20;
+        }
+
+        .word {
+            display: block;
+            height: 100%;
+            padding-left: 6px;
+            color: #956afa;
+            animation: spin_4991 4s infinite;
+        }
+
+        @keyframes spin_4991 {
+            0% {
+              transform: translateY(0%);
+            }
+            10% {
+              transform: translateY(-102%);
+            }
+            25% {
+              transform: translateY(-100%);
+            }
+            35% {
+              transform: translateY(-202%);
+            }
+            50% {
+              transform: translateY(-200%);
+            }
+            60% {
+              transform: translateY(-302%);
+            }
+            75% {
+              transform: translateY(-300%);
+            }
+            85% {
+              transform: translateY(-402%);
+            }
+            100% {
+              transform: translateY(0%);
+            }
+        }
+
+        /* From Uiverse.io by mrhyddenn */
+        .glowing-button {
+            position: relative;
+            padding: 10px 20px;
+            border-radius: 7px;
+            border: 1px solid rgb(61, 106, 255);
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 2px;
+            background: transparent;
+            color: rgb(61, 106, 255);
+            overflow: hidden;
+            box-shadow: 0 0 0 0 transparent;
+            -webkit-transition: all 0.2s ease-in;
+            -moz-transition: all 0.2s ease-in;
+            transition: all 0.2s ease-in;
+        }
+        
+        .dark .glowing-button {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .glowing-button:hover {
+            background: rgb(61, 106, 255);
+            color: #fff;
+            box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+            -webkit-transition: all 0.2s ease-out;
+            -moz-transition: all 0.2s ease-out;
+            transition: all 0.2s ease-out;
+        }
+        /* Dark mode adjustment for hover */
+        .dark .glowing-button:hover {
+            background: #fff;
+            color: rgb(61, 106, 255);
+            box-shadow: 0 0 30px 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .glowing-button:hover::before {
+            -webkit-animation: sh02 0.5s 0s linear;
+            -moz-animation: sh02 0.5s 0s linear;
+            animation: sh02 0.5s 0s linear;
+        }
+
+        .glowing-button::before {
+            content: '';
+            display: block;
+            width: 0px;
+            height: 86%;
+            position: absolute;
+            top: 7%;
+            left: 0%;
+            opacity: 0;
+            background: #fff;
+            box-shadow: 0 0 50px 30px #fff;
+            -webkit-transform: skewX(-20deg);
+            -moz-transform: skewX(-20deg);
+            -ms-transform: skewX(-20deg);
+            -o-transform: skewX(-20deg);
+            transform: skewX(-20deg);
+        }
+        /* Dark mode shimmer effect color */
+        .dark .glowing-button::before {
+            background: rgb(61, 106, 255);
+            box-shadow: 0 0 50px 30px rgb(61, 106, 255);
+        }
+
+        @keyframes sh02 {
+            from {
+                opacity: 0;
+                left: 0%;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+                left: 100%;
+            }
+        }
+
+        .glowing-button:active {
+            box-shadow: 0 0 0 0 transparent;
+            -webkit-transition: box-shadow 0.2s ease-in;
+            -moz-transition: box-shadow 0.2s ease-in;
+            transition: box-shadow 0.2s ease-in;
+        }
+        
+        /* Loading animation styles - Used for a dynamic 'Stats' section */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading svg polyline {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .loading svg polyline#back {
+            fill: none;
+            stroke: #4dcdf533;
+        }
+
+        .loading svg polyline#front {
+            fill: none;
+            stroke: #74b7f2;
+            stroke-dasharray: 48, 144;
+            stroke-dashoffset: 192;
+            animation: dash_682 1.4s linear infinite;
+        }
+
+        @keyframes dash_682 {
+            72.5% {
+                opacity: 0;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        /* Custom adjustment for the cloud SVG to use relative path in HTML */
+        .cloud svg {
+            fill: #fff;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-500 min-h-screen flex flex-col">
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 bg-white dark:bg-gray-800 shadow-md z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Brand -->
+                <a href="#" class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+                    HealthCare Eclipse
+                </a>
+
+                <!-- Nav Links & Theme Switch -->
+                <nav class="flex items-center space-x-6">
+                    
+                    
+                    <!-- Theme Switch -->
+                    
+                        
+                                <!-- Cloud SVG -->
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M512 256C512 397.4 397.4 512 256 512C149.2 512 60.25 450.4 23.36 364.5C-11.17 283.6 15.65 198.8 96.53 164.2C101.9 162.1 107.5 160.7 113.3 160C170.8 71.97 296.8 56.57 395.7 101.4C447.8 124.9 487.6 170.1 502.9 226.5C508.8 238.9 512 251.9 512 265.4V256z"/></svg>
+                            </span>
+                        </span>
+                    </label>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        
+        <!-- Hero/Animated Header Section -->
+        <section class="text-center mb-16">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4">
+                HealthCare Eclipse
+                <span class="inline-flex">
+                    <span class="loader-container" style="--bg-color: var(--tw-color-gray-100, #23dfdf);">
+                        <div class="loader">
+                            <span class="font-normal text-indigo-600">Connecting</span>
+                            <div class="words">
+                                <span class="word">Clinics</span>
+                                <span class="word">Patients</span>
+                                <span class="word">Doctors</span>
+                                <span class="word">Hospitals</span>
+                             
+                            </div>
+                        </div>
+                    </span>
+                </span>
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+                Predicting Silent Diseases
+            </p>
+
+            <!-- Glowing Button CTA -->
+            <a href="#mission" class="glowing-button">
+                Learn Our Mission
+            </a>
+        </section>
+
+        <!-- About Text and Stats -->
+        <section id="mission" class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            
+            <!-- Mission & Vision -->
+            <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-indigo-200 dark:border-indigo-700">Our Story & Commitment</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-6">
+                    Founded in 2025,HealthCare Eclipse was built on the principle that technolog. We saw a gap between complex engineering and elegant user experience, and dedicated ourselves to bridging it. Our team consists of passionate engineers, visionary designers, and dedicated customer success professionals, all working together to deliver excellence. We believe in transparency, continuous learning, and placing the client's needs at the heart of every project.
+                </p>
+                
+                <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3 mt-6">Vision</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    To be the global leader in sustainable and intelligent digital solutions, empowering businesses to achieve their full potential while prioritizing environmental and social responsibility.
+                </p>
+            </div>
+
+            <!-- Custom Loading Stats Block (Used the loading SVG for decoration/dynamic feel) -->
+            <div class="bg-indigo-600 p-8 rounded-xl shadow-xl flex flex-col justify-center items-center text-center">
+                <p class="text-white text-lg font-semibold mb-4">Our Key Metrics</p>
+                <div class="loading">
+                    <svg width="60" height="60" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <polyline id="back" points="1 4 7 4 13 4 19 4 23 4" fill="none"></polyline>
+                        <polyline id="front" points="1 4 7 4 13 4 19 4 23 4" fill="none"></polyline>
+                    </svg>
+                </div>
+                <div class="mt-4 text-white">
+                    <p class="text-3xl font-bold">99.9%</p>
+                    <p class="text-sm opacity-80">Uptime Reliability</p>
+                </div>
+                <div class="mt-4 text-white">
+                    <p class="text-3xl font-bold">120+</p>
+                    <p class="text-sm opacity-80">Global Clients</p>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-200 dark:bg-gray-800 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center">
+            
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 sm:mb-0">
+                &copy;  2025 Healthcare Eclipse. All rights reserved.
+            </p>
+
+            <!-- Social Media Icons (Using the custom .wrapper style) -->
+            <ul class="wrapper">
+                            <li class="icon facebook">
+                              <span class="tooltip">Facebook</span>
+                              <svg viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg>
+                            </li>
+                            <li class="icon twitter">
+                              <span class="tooltip">Twitter</span>
+                              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"></path></svg>
+                            </li>
+                            <li class="icon instagram">
+                              <span class="tooltip">Instagram</span>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path></svg>
+                            </li>
+                        </ul>
+        </div>
+    </footer>
+
+    <!-- Custom Modal Structure (hidden by default) -->
+    
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        const body = document.body;
+        const themeSwitch = document.getElementById('theme-switch');
+        const contactModal = document.getElementById('contactModal');
+        
+        // --- Theme Switch Logic ---
+        function checkTheme() {
+            // Check if dark mode is preferred or previously set
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                body.classList.add('dark');
+                themeSwitch.checked = true;
+            } else {
+                body.classList.remove('dark');
+                themeSwitch.checked = false;
+            }
+        }
+
+        themeSwitch.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                body.classList.add('dark');
+                localStorage.theme = 'dark';
+            } else {
+                body.classList.remove('dark');
+                localStorage.theme = 'light';
+            }
+        });
+
+        // Initialize theme on load
+        checkTheme();
+
+        // --- Modal Logic (using the custom fade-in animation) ---
+        function openModal() {
+            contactModal.classList.remove('hidden');
+            // Add event listener to close when clicking outside the modal content
+            contactModal.addEventListener('click', closeOnOutsideClick);
+        }
+
+        function closeModal() {
+            // Apply fade-out effect by removing the fade-in class
+            contactModal.querySelector('.animate-fade-in').classList.add('opacity-0');
+            
+            // Wait for animation to finish before hiding
+            setTimeout(() => {
+                contactModal.classList.add('hidden');
+                contactModal.querySelector('.animate-fade-in').classList.remove('opacity-0');
+                contactModal.removeEventListener('click', closeOnOutsideClick);
+            }, 300); 
+        }
+
+        function closeOnOutsideClick(event) {
+            // Check if the click occurred directly on the modal container (the overlay)
+            if (event.target === contactModal) {
+                closeModal();
+            }
+        }
+
+        // Expose functions globally for inline HTML click handlers
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>
