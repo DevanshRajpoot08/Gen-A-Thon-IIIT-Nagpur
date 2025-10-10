@@ -34,9 +34,8 @@ Since this is a client-side prototype, no complex server setup is required.
 Local Setup
 Clone the Repository:
 
-Bash
+<img width="841" height="158" alt="image" src="https://github.com/user-attachments/assets/e7efad9a-ef24-4a26-9163-f8958b67625f" />
 
-git clone [Your-Repo-URL]
 cd healthcare-eclipse
 Open in Browser:
 
