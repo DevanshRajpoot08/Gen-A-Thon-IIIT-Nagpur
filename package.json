@@ -1,0 +1,14 @@
+{
+  "name": "healthcare-eclipse-detective",
+  "version": "1.0.0",
+  "description": "AI Early Warning Core (Detective) for Healthcare Eclipse",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
